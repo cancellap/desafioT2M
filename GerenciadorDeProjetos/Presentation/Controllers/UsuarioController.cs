@@ -11,13 +11,11 @@ namespace GerenciadorDeProjetos.Web.Controllers
     {
         private readonly UsuarioService _usuarioService;
 
-        // Injeção de dependência do UsuarioService
         public UsuarioController()
         {
             _usuarioService = new UsuarioService(new UsuarioRepository());
         }
 
-        // Adicionar um novo usuário
         [HttpPost]
         public IActionResult AdicionarUsuario([FromBody] Usuario usuario)
         {
@@ -25,14 +23,17 @@ namespace GerenciadorDeProjetos.Web.Controllers
             {
                 if (string.IsNullOrWhiteSpace(usuario.Nome) || string.IsNullOrWhiteSpace(usuario.Cargo))
                 {
-                    return BadRequest("Nome e Cargo são obrigatórios.");
+                    return BadRequest(new { message = "Nome e Cargo são obrigatórios." });
                 }
 
-                bool sucesso = _usuarioService.AdicionarUsuario(usuario.Nome, usuario.Cargo);
+                var usuarioCriado = _usuarioService.AdicionarUsuario(usuario.Nome, usuario.Cargo);
 
-                if (sucesso)
+                if (usuarioCriado != null)
                 {
-                    return Ok(new { message = "Usuário adicionado com sucesso!" });
+                    return Ok(new
+                    {
+                        usuario = usuarioCriado
+                    });
                 }
                 else
                 {
@@ -45,7 +46,6 @@ namespace GerenciadorDeProjetos.Web.Controllers
             }
         }
 
-        // Obter um usuário por ID
         [HttpGet("{id}")]
         public IActionResult ObterUsuarioPorId(int id)
         {
@@ -71,9 +71,18 @@ namespace GerenciadorDeProjetos.Web.Controllers
             try
             {
                 var usuarios = _usuarioService.ObterTodosUsuarios();
+
                 if (usuarios == null || !usuarios.Any())
                 {
                     return NotFound(new { message = "Nenhum usuário encontrado." });
+                }
+
+                foreach (var usuario in usuarios)
+                {
+                    if (usuario.Tarefas == null || !usuario.Tarefas.Any())
+                    {
+                        Console.WriteLine($"Usuário {usuario.Id} não tem tarefas.");
+                    }
                 }
 
                 return Ok(usuarios);

@@ -136,3 +136,5 @@ C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\zh-Hant\M
 C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Dapper.dll
 C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\obj\Debug\net8.0\GerenciadorDeProjetos.sourcelink.json
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Newtonsoft.Json.dll

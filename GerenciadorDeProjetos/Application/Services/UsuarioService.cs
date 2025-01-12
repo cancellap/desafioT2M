@@ -1,7 +1,7 @@
-﻿using GerenciadorDeProjetos.Domain.Entities;
+﻿using System.Linq;
+using GerenciadorDeProjetos.Domain.DTOs;
+using GerenciadorDeProjetos.Domain.Entities;
 using GerenciadorDeProjetos.Domain.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace GerenciadorDeProjetos.Domain.Services
 {
@@ -14,7 +14,7 @@ namespace GerenciadorDeProjetos.Domain.Services
             _usuarioRepository = usuarioRepository;
         }
 
-        public bool AdicionarUsuario(string nome, string cargo)
+        public UsuarioDto AdicionarUsuario(string nome, string cargo)
         {
             try
             {
@@ -29,35 +29,69 @@ namespace GerenciadorDeProjetos.Domain.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao adicionar usuário: {ex.Message}");
-                return false;
+                return null;
             }
         }
-
-        public Usuario ObterUsuarioPorId(int id)
+        public UsuarioDto ObterUsuarioPorId(int id)
         {
             try
             {
-                return _usuarioRepository.GetById(id);
+                var usuario = _usuarioRepository.GetById(id);
+
+                if (usuario != null)
+                {
+                    var tarefasDto = usuario.Tarefas.Select(t => new TarefaDto(t)).ToList();
+
+                    return new UsuarioDto(usuario)
+                    {
+                        Tarefas = tarefasDto
+                    };
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao obter usuário: {ex.Message}");
+                Console.WriteLine($"Erro ao obter usuário com tarefas: {ex.Message}");
                 return null;
             }
         }
 
-        public IEnumerable<Usuario> ObterTodosUsuarios()
+        public IEnumerable<UsuarioDto> ObterTodosUsuarios()
         {
             try
             {
-                return _usuarioRepository.GetAll();
+                var usuarios = _usuarioRepository.GetAll();
+                var usuariosDto = new List<UsuarioDto>();
+
+                foreach (var usuario in usuarios)
+                {
+                    var tarefasDto = _usuarioRepository.ObterTarefasPorUsuario(usuario.Id)
+                                    .Select(t => new TarefaDto(t))
+                                    .ToList();
+
+                    if (!tarefasDto.Any())
+                    {
+                        Console.WriteLine($"Usuário {usuario.Id} não tem tarefas associadas.");
+                    }
+
+                    var usuarioDto = new UsuarioDto(usuario)
+                    {
+                        Tarefas = tarefasDto
+                    };
+
+                    usuariosDto.Add(usuarioDto);
+                }
+
+                return usuariosDto;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao obter usuários: {ex.Message}");
-                return new List<Usuario>();
+                Console.WriteLine($"Erro ao obter usuários com tarefas: {ex.Message}");
+                return new List<UsuarioDto>();
             }
         }
+
 
         public bool AtualizarUsuario(int id, string nome, string cargo)
         {

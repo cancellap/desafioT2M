@@ -1,41 +1,78 @@
 ﻿using Dapper;
 using GerenciadorDeProjetos.Domain.Entities;
-using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using GerenciadorDeProjetos.Data.Infrastructure;
 
 namespace GerenciadorDeProjetos.Domain.Interface
 {
     public class UsuarioRepository
     {
-        public bool Add(Usuario usuario)
+        public object JsonConvert { get; private set; }
+
+        public UsuarioDto Add(Usuario usuario)
         {
             try
             {
-                using var conn = new DbContext().Connection;
-                string query = @"INSERT INTO usuarios (nome, cargo)
-                                 VALUES (@nome, @cargo);";
+                using var conn = new PostgresDbContext().Connection;
+                string query = @"INSERT INTO usuario (nome, cargo)
+                         VALUES (@nome, @cargo) 
+                         RETURNING id;";
 
-                var result = conn.Execute(query, new { nome = usuario.Nome, cargo = usuario.Cargo });
+                var id = conn.ExecuteScalar<int>(query, new { nome = usuario.Nome, cargo = usuario.Cargo });
 
-                return result > 0;
+                return new UsuarioDto(GetById(id)) ;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao inserir usuário: {ex.Message}");
-                return false;
+                return null;
             }
         }
+        public List<Tarefa> ObterTarefasPorUsuario(int usuarioId)
+        {
+            using var conn = new PostgresDbContext().Connection;
+            string query = @"SELECT * FROM tarefa WHERE usuario_id = @usuarioId";
+
+            var tarefas = conn.Query<Tarefa>(query, new { usuarioId }).ToList();
+            return tarefas;
+        }
+
+
+    
 
         public Usuario GetById(int id)
         {
             try
             {
-                using var conn = new DbContext().Connection;
-                string query = @"SELECT * FROM usuarios WHERE id = @id";
+                using var conn = new PostgresDbContext().Connection;
 
-                return conn.QueryFirstOrDefault<Usuario>(query, new { id });
+                string query = @"SELECT * FROM usuario WHERE id = @id";
+                var usuario = conn.QueryFirstOrDefault<Usuario>(query, new { id });
+
+                if (usuario != null)
+                {
+                    string tarefasQuery = @"
+                SELECT 
+                    T.Id, 
+                    T.Nome, 
+                    T.Descricao, 
+                    T.Prazo, 
+                    T.Status, 
+                    T.Usuario_Id AS UsuarioId, 
+                    T.Projeto_Id AS ProjetoId
+                FROM Tarefa T
+                WHERE T.Usuario_Id = @id";
+
+                    var tarefas = conn.Query<Tarefa>(tarefasQuery, new { id }).ToList();
+                    usuario.Tarefas = tarefas; 
+
+                    foreach (var tarefa in tarefas)
+                    {
+                        Console.WriteLine($"Tarefa - UsuarioId: {tarefa.UsuarioId}, ProjetoId: {tarefa.ProjetoId}, Prazo: {tarefa.Prazo}");
+                    }
+                }
+
+                return usuario; 
             }
             catch (Exception ex)
             {
@@ -44,14 +81,40 @@ namespace GerenciadorDeProjetos.Domain.Interface
             }
         }
 
+
         public IEnumerable<Usuario> GetAll()
         {
             try
             {
-                using var conn = new DbContext().Connection;
-                string query = @"SELECT * FROM usuarios";
+                using var conn = new PostgresDbContext().Connection;
 
-                return conn.Query<Usuario>(query).ToList();
+                string query = @"SELECT * FROM usuario";
+                var usuarios = conn.Query<Usuario>(query).ToList();
+
+                Console.WriteLine($"Número de usuários encontrados: {usuarios.Count}");
+
+                foreach (var usuario in usuarios)
+                {
+                    string tarefasQuery = @"
+            SELECT 
+                T.Id, 
+                T.Nome, 
+                T.Descricao, 
+                T.Prazo, 
+                T.Status, 
+                T.Usuario_Id AS UsuarioId, 
+                T.Projeto_Id AS ProjetoId
+            FROM Tarefa T
+            WHERE T.Usuario_Id = @id";
+
+                    var tarefas = conn.Query<Tarefa>(tarefasQuery, new { id = usuario.Id }).ToList();
+                    usuario.Tarefas = tarefas;
+
+                    Console.WriteLine($"Usuário: {usuario.Id}, Tarefas Encontradas: {tarefas.Count}");
+                }
+
+
+                return usuarios;
             }
             catch (Exception ex)
             {
@@ -60,12 +123,15 @@ namespace GerenciadorDeProjetos.Domain.Interface
             }
         }
 
+
+
+
         public bool Update(Usuario usuario)
         {
             try
             {
-                using var conn = new DbContext().Connection;
-                string query = @"UPDATE usuarios 
+                using var conn = new PostgresDbContext().Connection;
+                string query = @"UPDATE usuario 
                                  SET nome = @nome, cargo = @cargo 
                                  WHERE id = @id";
 
@@ -84,8 +150,8 @@ namespace GerenciadorDeProjetos.Domain.Interface
         {
             try
             {
-                using var conn = new DbContext().Connection;
-                string query = @"DELETE FROM usuarios WHERE id = @id";
+                using var conn = new PostgresDbContext().Connection;
+                string query = @"DELETE FROM usuario WHERE id = @id";
 
                 var result = conn.Execute(query, new { id });
 
