@@ -1,0 +1,56 @@
+# .NET
+## Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]ist/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]ist/
+bin/
+obj/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NPM / Node.js
+node_modules/
+
+# React
+# Build output
+build/
+
+# Dependency directories
+node_modules/
+
+# Testing directories
+coverage/
+
+# IDEs and Text editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# macOS
+.DS_Store
