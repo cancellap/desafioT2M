@@ -1,6 +1,8 @@
 ﻿using GerenciadorDeProjetos.Domain.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
+using GerenciadorDeProjetos.Domain.Enum;
+using GerenciadorDeProjetos.Domain.Exceptions;
+using GerenciadorDeProjetos.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -9,13 +11,15 @@ namespace GerenciadorDeProjetos.Domain.Services
     public class TarefaService
     {
         private readonly TarefaRepository _tarefaRepository;
+        private readonly TokenService  _tokenService;
 
-        public TarefaService(TarefaRepository tarefaRepository)
+        public TarefaService(TarefaRepository tarefaRepository, TokenService tokenService)
         {
             _tarefaRepository = tarefaRepository;
+            _tokenService = tokenService;
         }
 
-        public TarefaInsertDto? AdicionarTarefa(TarefaInsertDto tarefaInsertDto)
+        public TarefaDto? AdicionarTarefa(TarefaInsertDto tarefaInsertDto)
         {
             try
             {
@@ -23,15 +27,8 @@ namespace GerenciadorDeProjetos.Domain.Services
 
                 if (tarefa != null)
                 {
-                    return new TarefaInsertDto
-                    {
-                        Nome = tarefa.Nome,
-                        Descricao = tarefa.Descricao,
-                        Prazo = tarefa.Prazo,
-                        Status = tarefa.Status,
-                        UsuarioId = tarefa.UsuarioId,
-                        ProjetoId = tarefa.ProjetoId
-                    };
+                    return new TarefaDto(tarefa);
+          
                 }
 
                 return null;
@@ -69,7 +66,7 @@ namespace GerenciadorDeProjetos.Domain.Services
                     Nome = tarefa.Nome,
                     Descricao = tarefa.Descricao,
                     Prazo = tarefa.Prazo.ToString("yyyy-MM-dd"),
-                    Status = tarefa.Status,
+                    StatusTarefa = tarefa.StatusTarefa.ToString(),
                     UsuarioId = tarefa.UsuarioId,
                     ProjetoId = tarefa.ProjetoId
                 }).ToList();
@@ -83,7 +80,7 @@ namespace GerenciadorDeProjetos.Domain.Services
             }
         }
 
-        public bool AtualizarTarefa(int id, string nome, string descricao, DateTime prazo, string status, int usuarioId, int projetoId)
+        public bool AtualizarTarefa(int id, string nome, string descricao, DateTime prazo, StatusTarefa status, int usuarioId, int projetoId)
         {
             try
             {
@@ -97,17 +94,26 @@ namespace GerenciadorDeProjetos.Domain.Services
             }
         }
 
-        public bool ExcluirTarefa(int id)
+        public bool ExcluirTarefa(int id, string token)
         {
             try
             {
+                int idUsuarioToken = _tokenService.GetIdToken(token);
+
+                var tarefa = _tarefaRepository.GetById(id);
+                if (tarefa.UsuarioId != idUsuarioToken)
+                {
+                    throw new Exception("Só é possível deletar tarefas em que você seja responsável.");
+                }
+
                 return _tarefaRepository.Delete(id);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao excluir tarefa: {ex.Message}");
-                return false;
+                throw;
             }
         }
+
     }
 }

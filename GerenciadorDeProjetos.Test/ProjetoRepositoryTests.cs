@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
 using GerenciadorDeProjetos.Domain.DTOs;
 using Xunit;
+using GerenciadorDeProjetos.Infrastructure.Interfaces;
 
 namespace GerenciadorDeProjetos.Tests
 {
@@ -31,7 +31,7 @@ namespace GerenciadorDeProjetos.Tests
                         Nome = "Tarefa 1",
                         Descricao = "Descrição da tarefa 1",
                         Prazo = DateTime.Now.AddDays(5),
-                        Status = "Em andamento",
+                        StatusTarefa = "Em andamento",
                         UsuarioId = 2
                     },
                     new Tarefa
@@ -39,7 +39,7 @@ namespace GerenciadorDeProjetos.Tests
                         Nome = "Tarefa 2",
                         Descricao = "Descrição da tarefa 2",
                         Prazo = DateTime.Now.AddDays(10),
-                        Status = "Pendente",
+                        StatusTarefa = "Pendente",
                         UsuarioId = 2
                     }
                 }

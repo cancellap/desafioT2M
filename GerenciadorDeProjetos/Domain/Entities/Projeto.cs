@@ -11,18 +11,22 @@ public class Projeto
 
     [Column("data_termino")]
     public DateTime DataTermino { get; set; }
+
+    [Column("usuario_id")]
+    public int UsuarioId { get; set; }
     public List<Tarefa> Tarefas { get; set; } = new List<Tarefa>();
 
 
     public Projeto() { }
 
-    public Projeto(string nome, string? descricao, DateTime dataInicio, DateTime dataTermino, List<Tarefa> tarefas)
+    public Projeto(string nome, string? descricao, DateTime dataInicio, DateTime dataTermino, List<Tarefa> tarefas, int usuarioId)
     {
         Nome = nome;
         Descricao = descricao;
         DataInicio = dataInicio.Date;
         DataTermino = dataTermino.Date;
         Tarefas = tarefas ?? new List<Tarefa>();
+        UsuarioId = usuarioId;
     }
 
     public Projeto(ProjetoDto projetoDto)

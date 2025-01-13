@@ -166,8 +166,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "usuario",
-        "Type": "GerenciadorDeProjetos.Domain.Entities.Usuario",
+        "Name": "usuarioInsertDto",
+        "Type": "GerenciadorDeProjetos.Domain.DTOs.UsuarioInsertDto",
         "IsRequired": true
       }
     ],
@@ -231,6 +231,22 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GerenciadorDeProjetos.Presentation.Controllers.AuthenticationController",
+    "Method": "Login",
+    "RelativePath": "login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loginDto",
+        "Type": "GerenciadorDeProjetos.Domain.DTOs.LoginDto",
         "IsRequired": true
       }
     ],

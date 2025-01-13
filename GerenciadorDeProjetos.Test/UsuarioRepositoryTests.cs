@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Dapper;
 using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
+using GerenciadorDeProjetos.Infrastructure.Interfaces;
 using Xunit;
 
 namespace GerenciadorDeProjetos.Tests

@@ -1,13 +1,14 @@
 ﻿using System.Data;
 using Dapper;
-using GerenciadorDeProjetos.Data.Infrastructure;
+using GerenciadorDeProjetos.Infrastructure.Data;
 using GerenciadorDeProjetos.Domain.Entities;
+using GerenciadorDeProjetos.Domain.DTOs;
 
-namespace GerenciadorDeProjetos.Domain.Interface
+namespace GerenciadorDeProjetos.Infrastructure.Interfaces
 {
     public class ProjetoRepository
     {
-        public bool Add(Projeto projeto)
+        public ProjetoDto Add(Projeto projeto)
         {
             IDbTransaction transaction = null;
 
@@ -16,49 +17,55 @@ namespace GerenciadorDeProjetos.Domain.Interface
                 using var conn = new PostgresDbContext().Connection;
                 transaction = conn.BeginTransaction();
 
-                string query = @"INSERT INTO projeto (nome, descricao, data_inicio, data_termino)
-                         VALUES (@nome, @descricao, @dataInicio, @dataTermino) RETURNING id;";
+                string query = @"INSERT INTO projeto (nome, descricao, data_inicio, data_termino, usuario_id)
+                          VALUES (@nome, @descricao, @dataInicio, @dataTermino, @usuarioId)
+                          RETURNING id, nome, descricao, data_inicio, data_termino, usuario_id;";
 
-                var projetoId = conn.QuerySingle<int>(query, new
+                var projetoDto = conn.QuerySingle<ProjetoDto>(query, new
                 {
                     nome = projeto.Nome,
                     descricao = projeto.Descricao,
                     dataInicio = projeto.DataInicio,
                     dataTermino = projeto.DataTermino,
+                    usuarioId = projeto.UsuarioId,
                 }, transaction: transaction);
 
-                if (projetoId > 0 && projeto.Tarefas.Any())
+                if (projeto.Tarefas.Any())
                 {
                     foreach (var tarefa in projeto.Tarefas)
                     {
-                        string tarefaQuery = @"INSERT INTO tarefa (nome, descricao, prazo, status, usuario_id, projeto_id) 
-                                       VALUES (@nome, @descricao, @prazo, @status, @usuarioId, @projetoId);";
+                        string tarefaQuery = @"INSERT INTO tarefa (nome, descricao, prazo, status_tarefa, usuario_id, projeto_id)
+                                       VALUES (@nome, @descricao, @prazo, @statusTarefa, @usuarioId, @projetoId);";
 
                         conn.Execute(tarefaQuery, new
                         {
                             nome = tarefa.Nome,
                             descricao = tarefa.Descricao,
                             prazo = tarefa.Prazo,
-                            status = tarefa.Status,
+                            statusTarefa = tarefa.StatusTarefa.ToString(),
                             usuarioId = tarefa.UsuarioId,
-                            projetoId = projetoId
+                            projetoId = projetoDto.Id
                         }, transaction: transaction);
                     }
                 }
 
-                transaction.Commit();
+                string tarefasQuery = "SELECT * FROM tarefa WHERE projeto_id = @projetoId;";
+                var tarefas = conn.Query<TarefaDto>(tarefasQuery, new { projetoId = projetoDto.Id }).ToList();
 
-                Console.WriteLine(projetoId > 0);
-                return projetoId > 0;
+                projetoDto.Tarefas = tarefas;
+
+                transaction.Commit();
+                return projetoDto;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao inserir projeto repo: {ex.Message}");
-
                 transaction?.Rollback();
-                return false;
+                return null;
             }
         }
+
+
 
 
         public ProjetoDto GetById(int id)
@@ -66,6 +73,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
             try
             {
                 using var conn = new PostgresDbContext().Connection;
+
                 string query = @"                  
                                 SELECT 
                                     P.Id, 
@@ -85,7 +93,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
                                             T.Nome, 
                                             T.Descricao, 
                                             T.Prazo, 
-                                            T.Status, 
+                                            T.Status_tarefa AS StatusTarefa, 
                                             T.Usuario_Id AS UsuarioId, 
                                             T.Projeto_Id AS ProjetoId
                                         FROM Tarefa T
@@ -110,6 +118,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
             {
                 using var conn = new PostgresDbContext().Connection;
 
+
                 string query = @"SELECT 
                                     P.Id, 
                                     P.Nome, 
@@ -127,7 +136,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
                                       T.Nome, 
                                       T.Descricao, 
                                       T.Prazo, 
-                                      T.Status, 
+                                      T.Status_tarefa AS StatusTarefa, 
                                       T.Usuario_Id AS UsuarioId, 
                                       T.Projeto_Id AS ProjetoId
                                   FROM Tarefa T
@@ -154,6 +163,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
             try
             {
                 using var conn = new PostgresDbContext().Connection;
+
                 string query = @"UPDATE projeto
                          SET nome = @nome, descricao = @descricao, data_inicio = @dataInicio, data_termino = @dataTermino 
                          WHERE id = @id";
@@ -187,6 +197,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
             try
             {
                 using var conn = new PostgresDbContext().Connection;
+
                 string query = @"DELETE FROM projeto WHERE id = @id";
 
                 var result = conn.Execute(query, new { id });

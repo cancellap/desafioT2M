@@ -1,26 +1,33 @@
 ﻿using Dapper;
 using GerenciadorDeProjetos.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using GerenciadorDeProjetos.Data.Infrastructure;
+using GerenciadorDeProjetos.Infrastructure.Data;
+using GerenciadorDeProjetos.Domain.DTOs;
 
-namespace GerenciadorDeProjetos.Domain.Interface
+
+namespace GerenciadorDeProjetos.Infrastructure.Interfaces
 {
     public class UsuarioRepository
     {
-        public object JsonConvert { get; private set; }
 
-        public UsuarioDto Add(Usuario usuario)
+        public UsuarioDto Add(Usuario usuarioInsertDto)
         {
             try
             {
                 using var conn = new PostgresDbContext().Connection;
-                string query = @"INSERT INTO usuario (nome, cargo)
-                         VALUES (@nome, @cargo) 
+                string query = @"INSERT INTO usuario (nome, cargo, username, password)
+                         VALUES (@nome, @cargo, @username, @password) 
                          RETURNING id;";
 
-                var id = conn.ExecuteScalar<int>(query, new { nome = usuario.Nome, cargo = usuario.Cargo });
+                var id = conn.ExecuteScalar<int>(query, new
+                {
+                    nome = usuarioInsertDto.Nome,
+                    cargo = usuarioInsertDto.Cargo,
+                    username = usuarioInsertDto.Username,
+                    password = usuarioInsertDto.Password
+                });
 
-                return new UsuarioDto(GetById(id)) ;
+                return new UsuarioDto(GetById(id));
             }
             catch (Exception ex)
             {
@@ -28,6 +35,36 @@ namespace GerenciadorDeProjetos.Domain.Interface
                 return null;
             }
         }
+
+
+        public UsuarioDto GetByUsername(string username)
+        {
+            try
+            {
+                using var conn = new PostgresDbContext().Connection;
+                string query = @"SELECT id, nome, cargo, username, password
+                         FROM usuario
+                         WHERE username = @username";
+
+                Console.WriteLine($"Executando query para username: {username}");
+
+                var usuario = conn.QueryFirstOrDefault<UsuarioDto>(query, new { username });
+
+                if (usuario == null)
+                {
+                    Console.WriteLine("Usuário não encontrado.");
+                }
+
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao verificar usuário: {ex.Message}. StackTrace: {ex.StackTrace}");
+                return null;
+            }
+        }
+
+
         public List<Tarefa> ObterTarefasPorUsuario(int usuarioId)
         {
             using var conn = new PostgresDbContext().Connection;
@@ -37,8 +74,6 @@ namespace GerenciadorDeProjetos.Domain.Interface
             return tarefas;
         }
 
-
-    
 
         public Usuario GetById(int id)
         {
@@ -53,18 +88,18 @@ namespace GerenciadorDeProjetos.Domain.Interface
                 {
                     string tarefasQuery = @"
                 SELECT 
-                    T.Id, 
-                    T.Nome, 
-                    T.Descricao, 
-                    T.Prazo, 
-                    T.Status, 
-                    T.Usuario_Id AS UsuarioId, 
-                    T.Projeto_Id AS ProjetoId
+                    id, 
+                    nome, 
+                    descricao, 
+                    prazo, 
+                    status_tarefa AS StatusTarefa, 
+                    usuario_id AS UsuarioId, 
+                    projeto_id AS ProjetoId 
                 FROM Tarefa T
                 WHERE T.Usuario_Id = @id";
 
                     var tarefas = conn.Query<Tarefa>(tarefasQuery, new { id }).ToList();
-                    usuario.Tarefas = tarefas; 
+                    usuario.Tarefas = tarefas;
 
                     foreach (var tarefa in tarefas)
                     {
@@ -72,7 +107,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
                     }
                 }
 
-                return usuario; 
+                return usuario;
             }
             catch (Exception ex)
             {
@@ -96,16 +131,16 @@ namespace GerenciadorDeProjetos.Domain.Interface
                 foreach (var usuario in usuarios)
                 {
                     string tarefasQuery = @"
-            SELECT 
-                T.Id, 
-                T.Nome, 
-                T.Descricao, 
-                T.Prazo, 
-                T.Status, 
-                T.Usuario_Id AS UsuarioId, 
-                T.Projeto_Id AS ProjetoId
-            FROM Tarefa T
-            WHERE T.Usuario_Id = @id";
+                                SELECT 
+                                id, 
+                                nome, 
+                                descricao, 
+                                prazo, 
+                                status_tarefa AS StatusTarefa, 
+                                usuario_id AS UsuarioId, 
+                                projeto_id AS ProjetoId 
+                                FROM Tarefa T
+                                WHERE T.Usuario_Id = @id";
 
                     var tarefas = conn.Query<Tarefa>(tarefasQuery, new { id = usuario.Id }).ToList();
                     usuario.Tarefas = tarefas;

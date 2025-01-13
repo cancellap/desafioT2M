@@ -1,6 +1,6 @@
 ﻿using Npgsql;
 
-namespace GerenciadorDeProjetos.Data.Infrastructure
+namespace GerenciadorDeProjetos.Infrastructure.Data
 {
     public class PostgresDbContext : IDisposable
     {
@@ -8,7 +8,7 @@ namespace GerenciadorDeProjetos.Data.Infrastructure
 
         public PostgresDbContext()
         {
-            Connection = new NpgsqlConnection("Host = localhost; Port = 5432; Username = postgres; Password = 1234; Database = DesafioT2M");
+            Connection = new NpgsqlConnection("Host=localhost;Port=5432;Username=postgres;Password=1234;Database=DesafioT2M");
             Connection.Open();
         }
 

@@ -138,3 +138,10 @@ C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Dapper.dl
 C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\obj\Debug\net8.0\GerenciadorDeProjetos.sourcelink.json
 C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\BCrypt.Net.dll
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\Pedro\PEDRO\DesafioT2m\GerenciadorDeProjetos\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll

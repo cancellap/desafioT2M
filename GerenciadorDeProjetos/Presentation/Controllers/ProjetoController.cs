@@ -1,9 +1,5 @@
-﻿using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
-using GerenciadorDeProjetos.Domain.Services;
+﻿using GerenciadorDeProjetos.Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 
 namespace GerenciadorDeProjetos.Web.Controllers
 {
@@ -11,23 +7,37 @@ namespace GerenciadorDeProjetos.Web.Controllers
     [ApiController]
     public class ProjetoController : ControllerBase
     {
-        private readonly ProjetoService _projetoService = new ProjetoService(new ProjetoRepository());
+        private readonly ProjetoService _projetoService;
+
+        public ProjetoController(ProjetoService projetoRepository)
+        {
+            _projetoService = projetoRepository;
+        }
 
         [HttpPost]
         public IActionResult AdicionarProjeto([FromBody] Projeto projeto)
         {
             try
             {
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new { message = "Token de autorização não fornecido." });
+                }
+
+                var token = authorizationHeader.Substring(7).Trim();
+
                 if (projeto == null || string.IsNullOrWhiteSpace(projeto.Nome) || projeto.DataInicio == default(DateTime) || projeto.DataTermino == default(DateTime))
                 {
                     return BadRequest("Nome, Data Início e Data Término são obrigatórios.");
                 }
 
-                bool sucesso = _projetoService.AdicionarProjeto(projeto.Nome, projeto.Descricao, projeto.DataInicio, projeto.DataTermino, projeto.Tarefas);
+                ProjetoDto projetoDto= _projetoService.AdicionarProjeto(projeto, token);
 
-                if (sucesso)
+                if (projetoDto != null)
                 {
-                    return Ok(new { message = "Projeto adicionado com sucesso!" });
+                    return Ok(projetoDto);
                 }
                 else
                 {
@@ -39,6 +49,7 @@ namespace GerenciadorDeProjetos.Web.Controllers
                 return StatusCode(500, new { message = $"Erro: {ex.Message}" });
             }
         }
+
 
         [HttpGet("{id}")]
         public IActionResult ObterProjetoPorId(int id)
@@ -103,7 +114,7 @@ namespace GerenciadorDeProjetos.Web.Controllers
         {
             try
             {
-                var projeto =  _projetoService.ObterProjetoPorId(id);
+                var projeto = _projetoService.ObterProjetoPorId(id);
                 if (projeto == null)
                 {
                     return NotFound(new { message = "Projeto não encontrado." });

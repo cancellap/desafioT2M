@@ -1,15 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using GerenciadorDeProjetos.Domain.Enum;
 
 namespace GerenciadorDeProjetos.Domain.DTOs
 {
     public class TarefaDto
 
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public String Prazo { get; set; }
-        public string Status { get; set; }
+        [Column("status_tarefa")]
+        public string StatusTarefa { get; set; }
         [Column("usuario_id")]
         public int UsuarioId { get; set; }
         [Column("projeto_id")]
@@ -17,20 +19,16 @@ namespace GerenciadorDeProjetos.Domain.DTOs
 
         public TarefaDto()
         {
-            
+
         }
 
         public TarefaDto(Tarefa tarefa)
         {
-            if (tarefa == null)
-            {
-                throw new ArgumentNullException(nameof(tarefa), "A tarefa não pode ser nula.");
-            }
             Id = tarefa.Id;
             Nome = tarefa.Nome;
             Descricao = tarefa.Descricao;
             Prazo = tarefa.Prazo.ToString("yyyy-MM-dd");
-            Status = tarefa.Status;
+            StatusTarefa = tarefa.StatusTarefa.ToString(); // Retorna o valor textual do enum
             UsuarioId = tarefa.UsuarioId;
             ProjetoId = tarefa.ProjetoId;
         }

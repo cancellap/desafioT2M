@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
 using GerenciadorDeProjetos.Domain.DTOs;
 using Xunit;
+using GerenciadorDeProjetos.Infrastructure.Interfaces;
 
 namespace GerenciadorDeProjetos.Tests
 {
@@ -63,7 +63,7 @@ namespace GerenciadorDeProjetos.Tests
                 Nome = "Tarefa Atualizada",
                 Descricao = "Descrição atualizada",
                 Prazo = DateTime.Now.AddDays(7),
-                Status = "Concluída",
+                StatusTarefa = "Concluída",
                 UsuarioId = 2,
                 ProjetoId = 3
             };

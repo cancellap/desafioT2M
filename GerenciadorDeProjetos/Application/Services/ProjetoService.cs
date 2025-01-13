@@ -1,40 +1,41 @@
 ﻿using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
-using System;
-using System.Collections.Generic;
+using GerenciadorDeProjetos.Infrastructure.Interfaces;
 
-namespace GerenciadorDeProjetos.Domain.Services 
+namespace GerenciadorDeProjetos.Application.Services
 {
     public class ProjetoService
     {
         private readonly ProjetoRepository _projetoRepository;
+        private readonly TokenService _tokenService;
 
-        public ProjetoService(ProjetoRepository projetoRepository)
+        public ProjetoService(ProjetoRepository projetoRepository, TokenService tokenService)
         {
             _projetoRepository = projetoRepository;
+            _tokenService = tokenService;
         }
 
-        public bool AdicionarProjeto(string nome, string descricao, DateTime dataInicio, DateTime dataTermino, List<Tarefa> tarefas)
+        public ProjetoDto AdicionarProjeto(Projeto projeto, string token)
         {
             try
             {
-                var projeto = new Projeto
+                int? id = _tokenService.GetIdToken(token);
+                if (id.HasValue)
                 {
-                    Nome = nome,
-                    Descricao = descricao,
-                    DataInicio = dataInicio,
-                    DataTermino = dataTermino,
-                    Tarefas = tarefas ?? new List<Tarefa>()
-                };
-
-                return _projetoRepository.Add(projeto);
+                    projeto.UsuarioId = id.Value;
+                    ProjetoDto projetoDto = _projetoRepository.Add(projeto);
+                    return projetoDto;
+                }
+                return null;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao adicionar projeto: {ex.Message}");
-                return false;
+                return null;
             }
         }
+
+
+
+
 
         public ProjetoDto ObterProjetoPorId(int id)
         {

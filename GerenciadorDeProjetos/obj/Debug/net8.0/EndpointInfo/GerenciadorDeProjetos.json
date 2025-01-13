@@ -5,6 +5,37 @@
     "version": "1.0"
   },
   "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Projeto": {
       "post": {
         "tags": [
@@ -264,17 +295,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Usuario"
+                "$ref": "#/components/schemas/UsuarioInsertDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Usuario"
+                "$ref": "#/components/schemas/UsuarioInsertDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Usuario"
+                "$ref": "#/components/schemas/UsuarioInsertDto"
               }
             }
           }
@@ -383,6 +414,20 @@
   },
   "components": {
     "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Projeto": {
         "type": "object",
         "properties": {
@@ -406,6 +451,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "usuarioId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "tarefas": {
             "type": "array",
             "items": {
@@ -415,6 +464,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "StatusTarefa": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "Tarefa": {
         "type": "object",
@@ -435,9 +492,8 @@
             "type": "string",
             "format": "date-time"
           },
-          "status": {
-            "type": "string",
-            "nullable": true
+          "statusTarefa": {
+            "$ref": "#/components/schemas/StatusTarefa"
           },
           "responsavel": {
             "$ref": "#/components/schemas/Usuario"
@@ -452,6 +508,40 @@
           },
           "projeto": {
             "$ref": "#/components/schemas/Projeto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TarefaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "prazo": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusTarefa": {
+            "type": "string",
+            "nullable": true
+          },
+          "usuarioId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projetoId": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -471,9 +561,8 @@
             "type": "string",
             "format": "date-time"
           },
-          "status": {
-            "type": "string",
-            "nullable": true
+          "statusTarefa": {
+            "$ref": "#/components/schemas/StatusTarefa"
           },
           "usuarioId": {
             "type": "integer",
@@ -506,6 +595,51 @@
             "items": {
               "$ref": "#/components/schemas/Tarefa"
             },
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsuarioInsertDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargo": {
+            "type": "string",
+            "nullable": true
+          },
+          "tarefas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TarefaDto"
+            },
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "passwordConfirm": {
+            "type": "string",
             "nullable": true
           }
         },

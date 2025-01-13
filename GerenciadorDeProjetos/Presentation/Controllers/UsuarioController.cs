@@ -1,5 +1,6 @@
-﻿using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
+﻿using GerenciadorDeProjetos.Domain.DTOs;
+using GerenciadorDeProjetos.Domain.Entities;
+using GerenciadorDeProjetos.Domain.Exceptions;
 using GerenciadorDeProjetos.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,22 +12,22 @@ namespace GerenciadorDeProjetos.Web.Controllers
     {
         private readonly UsuarioService _usuarioService;
 
-        public UsuarioController()
+        public UsuarioController(UsuarioService usuarioService)
         {
-            _usuarioService = new UsuarioService(new UsuarioRepository());
+            _usuarioService = usuarioService;
         }
 
         [HttpPost]
-        public IActionResult AdicionarUsuario([FromBody] Usuario usuario)
+        public IActionResult AdicionarUsuario([FromBody] UsuarioInsertDto usuarioInsertDto)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(usuario.Nome) || string.IsNullOrWhiteSpace(usuario.Cargo))
+                if (string.IsNullOrWhiteSpace(usuarioInsertDto.Nome) || string.IsNullOrWhiteSpace(usuarioInsertDto.Cargo))
                 {
                     return BadRequest(new { message = "Nome e Cargo são obrigatórios." });
                 }
 
-                var usuarioCriado = _usuarioService.AdicionarUsuario(usuario.Nome, usuario.Cargo);
+                var usuarioCriado = _usuarioService.AdicionarUsuario(usuarioInsertDto);
 
                 if (usuarioCriado != null)
                 {
@@ -35,16 +36,26 @@ namespace GerenciadorDeProjetos.Web.Controllers
                         usuario = usuarioCriado
                     });
                 }
-                else
-                {
-                    return StatusCode(500, new { message = "Falha ao adicionar o usuário." });
-                }
+
+                return BadRequest(new { message = "Não foi possível criar o usuário." });
+            }
+            catch (SenhasNaoCoincidemException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (UsuarioJaExisteException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = $"Erro: {ex.Message}" });
+                return StatusCode(500, new { message = $"Erro interno: {ex.Message}" });
             }
         }
+
+
+
+
 
         [HttpGet("{id}")]
         public IActionResult ObterUsuarioPorId(int id)

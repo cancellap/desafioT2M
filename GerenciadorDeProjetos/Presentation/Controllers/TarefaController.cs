@@ -1,6 +1,7 @@
-﻿using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
+﻿using GerenciadorDeProjetos.Domain.DTOs;
+using GerenciadorDeProjetos.Domain.Entities;
 using GerenciadorDeProjetos.Domain.Services;
+using GerenciadorDeProjetos.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -10,7 +11,12 @@ namespace GerenciadorDeProjetos.Web.Controllers
     [ApiController]
     public class TarefaController : ControllerBase
     {
-        private readonly TarefaService _tarefaService = new TarefaService(new TarefaRepository());
+        private readonly TarefaService _tarefaService;
+
+        public TarefaController(TarefaService tarefaService)
+        {
+            _tarefaService = tarefaService;
+        }
 
         [HttpPost]
         [HttpPost]
@@ -34,11 +40,7 @@ namespace GerenciadorDeProjetos.Web.Controllers
 
                 if (tarefa != null)
                 {
-                    return Ok(new
-                    {
-                        message = "Tarefa adicionada com sucesso!",
-                        tarefa = tarefa
-                    });
+                    return Ok(tarefa);
                 }
                 else
                 {
@@ -58,18 +60,21 @@ namespace GerenciadorDeProjetos.Web.Controllers
         {
             try
             {
-                var tarefa = _tarefaService.ObterTarefaPorId(id);
-                if (tarefa == null)
+                var tarefaDto = _tarefaService.ObterTarefaPorId(id); 
+
+                if (tarefaDto == null)
                 {
                     return NotFound(new { message = "Tarefa não encontrada." });
                 }
-                return Ok(tarefa);
+
+                return Ok(tarefaDto); 
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Erro: {ex.Message}" });
             }
         }
+
 
         [HttpGet]
         public IActionResult ObterTodasTarefas()
@@ -100,14 +105,14 @@ namespace GerenciadorDeProjetos.Web.Controllers
                     tarefa.Nome,
                     tarefa.Descricao,
                     tarefa.Prazo,
-                    tarefa.Status,
+                    tarefa.StatusTarefa,
                     tarefa.UsuarioId,
                     tarefa.ProjetoId
                 );
 
                 if (sucesso)
                 {
-                    return Ok(new { message = "Tarefa atualizada com sucesso!" });
+                    return Ok(new { message = "Tarefa atualizada com sucesso!" , tarefa});
                 }
                 else
                 {
@@ -125,7 +130,16 @@ namespace GerenciadorDeProjetos.Web.Controllers
         {
             try
             {
-                bool sucesso = _tarefaService.ExcluirTarefa(id);
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new { message = "Token de autorização não fornecido." });
+                }
+
+                var token = authorizationHeader.Substring(7).Trim();
+
+                bool sucesso = _tarefaService.ExcluirTarefa(id, token);
                 if (sucesso)
                 {
                     return Ok(new { message = "Tarefa excluída com sucesso!" });
@@ -137,8 +151,9 @@ namespace GerenciadorDeProjetos.Web.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = $"Erro: {ex.Message}" });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
+
     }
 }

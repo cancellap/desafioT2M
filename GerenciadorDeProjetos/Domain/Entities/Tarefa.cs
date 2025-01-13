@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using GerenciadorDeProjetos.Domain.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
+using GerenciadorDeProjetos.Domain.Enum;
 
 public class Tarefa
 {
@@ -8,7 +9,8 @@ public class Tarefa
     public string Nome { get; set; }
     public string Descricao { get; set; }
     public DateTime Prazo { get; set; }
-    public string Status { get; set; }
+    [Column("status_tarefa")]
+    public StatusTarefa StatusTarefa { get; set; }
     public Usuario? Responsavel { get; set; }
 
     [Column("usuario_id")]
@@ -21,12 +23,12 @@ public class Tarefa
 
     public Tarefa() { }
 
-    public Tarefa(string nome, string descricao, DateTime prazo, string status, int usuarioId, int projetoId)
+    public Tarefa(string nome, string descricao, DateTime prazo, StatusTarefa status, int usuarioId, int projetoId)
     {
         Nome = nome;
         Descricao = descricao;
         Prazo = prazo;
-        Status = status;
+        StatusTarefa = status;
         UsuarioId = usuarioId;
         ProjetoId = projetoId;
     }
@@ -40,7 +42,7 @@ public class Tarefa
         Nome = tarefaInsertDto.Nome;
         Descricao = tarefaInsertDto.Descricao;
         Prazo = tarefaInsertDto.Prazo;
-        Status = tarefaInsertDto.Status;
+        StatusTarefa = tarefaInsertDto.StatusTarefa;
         UsuarioId = tarefaInsertDto.UsuarioId; 
         ProjetoId = tarefaInsertDto.ProjetoId;
     }
@@ -54,7 +56,7 @@ public class Tarefa
         Nome = tarefaDto.Nome;
         Descricao = tarefaDto.Descricao;
         Prazo = DateTime.TryParse(tarefaDto.Prazo, out var prazo) ? prazo.Date : DateTime.MinValue;
-        Status = tarefaDto.Status;
+        StatusTarefa = Enum.Parse<StatusTarefa>(tarefaDto.StatusTarefa.ToString());
         UsuarioId = tarefaDto.UsuarioId;
         ProjetoId = tarefaDto.ProjetoId;
     }

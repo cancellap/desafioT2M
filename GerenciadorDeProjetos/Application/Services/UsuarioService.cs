@@ -1,37 +1,66 @@
 ﻿using System.Linq;
 using GerenciadorDeProjetos.Domain.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Interface;
+using GerenciadorDeProjetos.Domain.Exceptions;
+using GerenciadorDeProjetos.Infrastructure.Interfaces;
 
 namespace GerenciadorDeProjetos.Domain.Services
 {
     public class UsuarioService
     {
         private readonly UsuarioRepository _usuarioRepository;
+        private readonly TokenService _tokenService;
 
-        public UsuarioService(UsuarioRepository usuarioRepository)
+        public UsuarioService(UsuarioRepository usuarioRepository, TokenService tokenService)
         {
             _usuarioRepository = usuarioRepository;
+            _tokenService = tokenService;
         }
 
-        public UsuarioDto AdicionarUsuario(string nome, string cargo)
+
+        public UsuarioDto AdicionarUsuario(UsuarioInsertDto usuarioInsertDto)
         {
             try
             {
+                if (usuarioInsertDto.Password != usuarioInsertDto.PasswordConfirm)
+                {
+                    throw new SenhasNaoCoincidemException();
+                }
+
+                var usuarioExistente = _usuarioRepository.GetByUsername(usuarioInsertDto.Username);
+                if (usuarioExistente != null)
+                {
+                    throw new UsuarioJaExisteException(usuarioInsertDto.Username);
+                }
+
+                var hashedPassword = _tokenService.HashPassword(usuarioInsertDto.Password);
+
                 var usuario = new Usuario
                 {
-                    Nome = nome,
-                    Cargo = cargo
+                    Nome = usuarioInsertDto.Nome,
+                    Cargo = usuarioInsertDto.Cargo,
+                    Username = usuarioInsertDto.Username,
+                    Password = hashedPassword
                 };
 
-                return _usuarioRepository.Add(usuario);
+                var usuarioCriado = _usuarioRepository.Add(usuario);
+
+                if (usuarioCriado == null)
+                {
+                    throw new Exception("Erro ao inserir usuário no banco de dados.");
+                }
+
+                return usuarioCriado;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao adicionar usuário: {ex.Message}");
-                return null;
+                throw;
             }
         }
+
+
+
         public UsuarioDto ObterUsuarioPorId(int id)
         {
             try

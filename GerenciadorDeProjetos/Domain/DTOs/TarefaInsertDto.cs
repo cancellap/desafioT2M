@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using GerenciadorDeProjetos.Domain.Enum;
 
 public class TarefaInsertDto
 {
     public string Nome { get; set; }
     public string Descricao { get; set; }
-    public DateTime Prazo { get; set; } 
-    public string Status { get; set; }
+    public DateTime Prazo { get; set; }
+    [Column("status_tarefa")]
+    public StatusTarefa StatusTarefa { get; set; }
     [Column("usuario_id")]
     public int UsuarioId { get; set; }
     [Column("projeto_id")]
@@ -25,7 +27,7 @@ public class TarefaInsertDto
         Nome = tarefa.Nome;
         Descricao = tarefa.Descricao;
         Prazo = tarefa.Prazo;
-        Status = tarefa.Status;
+        StatusTarefa = tarefa.StatusTarefa;
         UsuarioId = tarefa.UsuarioId;
         ProjetoId = tarefa.ProjetoId;
     }

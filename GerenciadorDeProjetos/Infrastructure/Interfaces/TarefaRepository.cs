@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using GerenciadorDeProjetos.Data.Infrastructure;
+using GerenciadorDeProjetos.Infrastructure.Data;
 using GerenciadorDeProjetos.Domain.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
 using Npgsql;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GerenciadorDeProjetos.Domain.Interface
+namespace GerenciadorDeProjetos.Infrastructure.Interfaces
 {
     public class TarefaRepository
     {
@@ -18,16 +18,16 @@ namespace GerenciadorDeProjetos.Domain.Interface
                 using var conn = new PostgresDbContext().Connection;
 
                 string query = @"
-            INSERT INTO tarefa (nome, descricao, prazo, status, usuario_id, projeto_id)
-            VALUES (@nome, @descricao, @prazo, @status, @usuarioId, @projetoId)
-            RETURNING id;";
+                    INSERT INTO tarefa (nome, descricao, prazo, status_tarefa, usuario_id, projeto_id)
+                    VALUES (@nome, @descricao, @prazo, @statusTarefa, @usuarioId, @projetoId)
+                    RETURNING id;";
 
                 var id = conn.ExecuteScalar<int>(query, new
                 {
                     nome = tarefaInsertDto.Nome,
                     descricao = tarefaInsertDto.Descricao,
                     prazo = tarefaInsertDto.Prazo,
-                    status = tarefaInsertDto.Status,
+                    statusTarefa = tarefaInsertDto.StatusTarefa.ToString(),
                     usuarioId = tarefaInsertDto.UsuarioId,
                     projetoId = tarefaInsertDto.ProjetoId
                 });
@@ -44,7 +44,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
                     Nome = tarefaInsertDto.Nome,
                     Descricao = tarefaInsertDto.Descricao,
                     Prazo = tarefaInsertDto.Prazo,
-                    Status = tarefaInsertDto.Status,
+                    StatusTarefa = tarefaInsertDto.StatusTarefa,
                     UsuarioId = tarefaInsertDto.UsuarioId,
                     ProjetoId = tarefaInsertDto.ProjetoId
                 };
@@ -70,7 +70,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
                 nome, 
                 descricao, 
                 prazo, 
-                status, 
+                status_tarefa AS StatusTarefa, 
                 usuario_id AS UsuarioId, 
                 projeto_id AS ProjetoId 
             FROM tarefa 
@@ -99,7 +99,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
                                 nome, 
                                 descricao, 
                                 prazo, 
-                                status, 
+                                status_tarefa AS StatusTarefa, 
                                 usuario_id AS UsuarioId, 
                                 projeto_id AS ProjetoId
                             FROM tarefa";
@@ -119,7 +119,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
             {
                 using var conn = new PostgresDbContext().Connection;
                 string query = @"UPDATE tarefa 
-                                 SET nome = @nome, descricao = @descricao, prazo = @prazo, status = @status, 
+                                 SET nome = @nome, descricao = @descricao, prazo = @prazo, status_tarefa = @statusTarefa, 
                                      usuario_id = @usuarioId, projeto_id = @projetoId 
                                  WHERE id = @id";
 
@@ -129,7 +129,7 @@ namespace GerenciadorDeProjetos.Domain.Interface
                     nome = tarefa.Nome,
                     descricao = tarefa.Descricao,
                     prazo = tarefa.Prazo,
-                    status = tarefa.Status,
+                    statusTarefa = tarefa.StatusTarefa,
                     usuarioId = tarefa.UsuarioId,
                     projetoId = tarefa.ProjetoId,
                 });

@@ -13,6 +13,9 @@ public class ProjetoDto
     [Column("data_termino")]
     public string DataTermino { get; set; }
 
+    [Column("usuario_id")]
+    public int UsuarioId { get; set; }
+
     public List<TarefaDto> Tarefas { get; set; } = new List<TarefaDto>();
 
     public ProjetoDto() { }
@@ -27,10 +30,9 @@ public class ProjetoDto
         Id = projeto.Id;
         Nome = projeto.Nome;
         Descricao = projeto.Descricao;
-
         DataInicio = projeto.DataInicio.ToString("yyyy-MM-dd");
         DataTermino = projeto.DataTermino.ToString("yyyy-MM-dd");
-
+        UsuarioId = projeto.UsuarioId;
         Tarefas = projeto.Tarefas.Select(t => new TarefaDto(t)).ToList();
     }
 }
