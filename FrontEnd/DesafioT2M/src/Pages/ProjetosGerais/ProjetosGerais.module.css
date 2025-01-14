@@ -1,0 +1,20 @@
+h1 {
+  text-align: center;
+  padding-top: 30px;
+  font-size: 2.5rem;
+}
+
+.projetosGerais {
+  margin: 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 16px;
+  justify-items: center;
+}
+
+.projeto-card {
+  flex: 1 1 calc(33.33% - 16px);
+  min-width: 250px;
+  box-sizing: border-box;
+}

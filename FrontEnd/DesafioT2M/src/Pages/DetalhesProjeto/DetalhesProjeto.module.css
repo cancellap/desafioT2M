@@ -1,0 +1,113 @@
+.card {
+  background-color: var(--color-secondary);
+  width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-tertiary);
+}
+
+.card h1 {
+  color: var(--color-warning);
+  margin-bottom: 1.25em;
+  font-size: 2.5rem;
+}
+
+.card p {
+  font-size: 1.4rem;
+  color: var(--color-tertiary);
+  margin-bottom: 0.75em;
+  text-align: center;
+}
+
+.tarefasContainer {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.tarefasTitle {
+  text-align: center;
+  font-size: 2.2rem;
+  color: var(--color-warning);
+  margin-bottom: 10px;
+}
+
+.tarefasLista {
+  list-style: none;
+  padding: 0;
+}
+
+.tarefaItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--color-tertiary);
+  border-radius: 6px;
+  background-color: white;
+}
+
+.tarefaItem.completed {
+  text-decoration: line-through;
+  color: var(--color-secondary);
+  background-color: #e8f5e9;
+}
+
+.tarefaNome {
+  font-size: 1.1rem;
+  color: var(--color-tertiary);
+}
+
+.tarefaStatus.naoIniciado {
+  color: var(--color-warning);
+}
+
+.tarefaStatus.emAndamento {
+  color: var(--color-tertiary);
+}
+
+.tarefaStatus.completed {
+  color: var(--color-warning);
+}
+
+.button {
+  width: 100%;
+  padding: 0.875em;
+  background-color: var(--color-tertiary);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1.25em;
+}
+
+.button:hover {
+  background-color: #1c5a63;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 1.25em;
+    max-width: 100%;
+  }
+
+  .tarefasTitle {
+    font-size: 1.25rem;
+  }
+
+  .tarefaNome {
+    font-size: 1rem;
+  }
+
+  .button {
+    padding: 0.75em;
+  }
+}
