@@ -65,6 +65,22 @@ namespace GerenciadorDeProjetos.Application.Services
             }
         }
 
+        public IEnumerable<ProjetoDto> GetAllProjetoPorUsuario(string token)
+        {
+
+            try
+            {
+                int? id = _tokenService.GetIdToken(token);
+
+                return _projetoRepository.GetAllProjetoPorUsuario(id.Value);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao obter projetos: {ex.Message}");
+                return new List<ProjetoDto>();
+            }
+        }
+
         public bool AtualizarProjeto(int id, string nome, string descricao, DateTime dataInicio, DateTime dataTermino)
         {
             try

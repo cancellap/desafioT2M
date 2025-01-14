@@ -83,6 +83,29 @@ namespace GerenciadorDeProjetos.Web.Controllers
             }
         }
 
+        [HttpGet("porUsuario")]
+        public IActionResult ObterTodosProjetosPorUsuario()
+        {
+            try
+            {
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new { message = "Token de autorização não fornecido." });
+                }
+
+                var token = authorizationHeader.Substring(7).Trim();
+
+                var projetos = _projetoService.GetAllProjetoPorUsuario(token);
+                return Ok(projetos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Erro: {ex.Message}" });
+            }
+        }
+
         [HttpPut("{id}")]
         public IActionResult AtualizarProjeto(int id, [FromBody] Projeto projeto)
         {

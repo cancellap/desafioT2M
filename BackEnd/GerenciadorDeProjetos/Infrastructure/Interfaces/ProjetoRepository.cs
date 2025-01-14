@@ -159,6 +159,54 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
             }
         }
 
+        public IEnumerable<ProjetoDto> GetAllProjetoPorUsuario(int usuarioId)
+        {
+            try
+            {
+                using var conn = new PostgresDbContext().Connection;
+
+                string query = @"SELECT 
+                            P.Id, 
+                            P.Nome, 
+                            P.Descricao, 
+                            P.data_inicio AS DataInicio, 
+                            P.data_termino AS DataTermino,
+                            P.usuario_id as UsuarioId
+                        FROM Projeto P
+                        WHERE P.usuario_id = @UsuarioId";
+
+                var projetos = conn.Query<Projeto>(query, new { UsuarioId = usuarioId }).ToList();
+
+                foreach (var projeto in projetos)
+                {
+                    string tarefasQuery = @"SELECT 
+                                        T.Id, 
+                                        T.Nome, 
+                                        T.Descricao, 
+                                        T.Prazo, 
+                                        T.Status_tarefa AS StatusTarefa, 
+                                        T.Usuario_Id AS UsuarioId, 
+                                        T.Projeto_Id AS ProjetoId
+                                    FROM Tarefa T
+                                    INNER JOIN Projeto P ON T.Projeto_Id = P.Id
+                                    WHERE P.Id = @Id";
+
+                    var tarefas = conn.Query<Tarefa>(tarefasQuery, new { Id = projeto.Id }).ToList();
+                    projeto.Tarefas = tarefas;
+                }
+
+                var projetoDtos = projetos.Select(p => new ProjetoDto(p)).ToList();
+                return projetoDtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao obter projetos: {ex.Message}");
+                return new List<ProjetoDto>();
+            }
+        }
+
+
+
 
         public bool Update(Projeto projeto)
         {
