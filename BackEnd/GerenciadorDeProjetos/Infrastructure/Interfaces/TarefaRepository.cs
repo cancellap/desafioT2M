@@ -1,17 +1,17 @@
 ﻿using Dapper;
 using GerenciadorDeProjetos.Infrastructure.Data;
-using GerenciadorDeProjetos.Domain.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
 using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GerenciadorDeProjetos.Application.DTOs;
 
 namespace GerenciadorDeProjetos.Infrastructure.Interfaces
 {
     public class TarefaRepository
     {
-        public Tarefa? Add(TarefaInsertDto tarefaInsertDto)
+        public Tarefa? Add(TarefaInsertDto tarefaInsertDto, int usuarioId)
         {
             try
             {
@@ -28,10 +28,10 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                     descricao = tarefaInsertDto.Descricao,
                     prazo = tarefaInsertDto.Prazo,
                     statusTarefa = tarefaInsertDto.StatusTarefa.ToString(),
-                    usuarioId = tarefaInsertDto.UsuarioId,
+                    usuarioId,
                     projetoId = tarefaInsertDto.ProjetoId
                 });
-
+                Console.WriteLine(usuarioId);
                 if (id <= 0)
                 {
                     Console.WriteLine("Erro: ID retornado é inválido.");
@@ -45,7 +45,7 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                     Descricao = tarefaInsertDto.Descricao,
                     Prazo = tarefaInsertDto.Prazo,
                     StatusTarefa = tarefaInsertDto.StatusTarefa,
-                    UsuarioId = tarefaInsertDto.UsuarioId,
+                    UsuarioId = usuarioId,
                     ProjetoId = tarefaInsertDto.ProjetoId
                 };
             }

@@ -1,4 +1,4 @@
-﻿using GerenciadorDeProjetos.Domain.DTOs;
+﻿using GerenciadorDeProjetos.Application.DTOs;
 using GerenciadorDeProjetos.Domain.Enum;
 using GerenciadorDeProjetos.Infrastructure.Interfaces;
 
@@ -16,11 +16,13 @@ namespace GerenciadorDeProjetos.Domain.Services
             _tokenService = tokenService;
         }
 
-        public TarefaDto? AdicionarTarefa(TarefaInsertDto tarefaInsertDto)
+        public TarefaDto? AdicionarTarefa(TarefaInsertDto tarefaInsertDto, string token)
         {
             try
             {
-                var tarefa = _tarefaRepository.Add(tarefaInsertDto);
+                int id = _tokenService.GetIdToken(token);
+
+                var tarefa = _tarefaRepository.Add(tarefaInsertDto, id);
 
                 if (tarefa != null)
                 {

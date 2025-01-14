@@ -1,4 +1,4 @@
-﻿using GerenciadorDeProjetos.Domain.DTOs;
+﻿using GerenciadorDeProjetos.Application.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
 
 public class UsuarioDto

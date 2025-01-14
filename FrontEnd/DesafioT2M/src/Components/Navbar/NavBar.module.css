@@ -9,30 +9,48 @@
   border-radius: 0 0 20px 20px;
 }
 
-.navbar-logo {
+.navbarLogo {
   font-size: 1.9rem;
   font-weight: bold;
   color: var(--color-tertiary);
 }
 
-.navbar-links {
+.navbarLinks {
   display: flex;
   gap: 1.5rem;
+  flex-grow: 1;
+  margin-left: 50%;
 }
 
-.navbar-link {
+.navbarLink {
   text-decoration: none;
   color: var(--color-primary);
   font-size: 1.4rem;
   font-weight: 500;
   transition: color 0.3s;
+  margin-top: 6px;
 }
 
-.navbar-link:hover {
+.navbarLink:hover {
   color: var(--color-warning);
 }
 
 .active {
   color: var(--color-warning-dark);
   font-weight: bold;
+}
+
+.logoutButton {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-left: 2rem;
+}
+
+.logoutButton:hover {
+  background-color: #ff1a1a;
 }

@@ -1,6 +1,6 @@
 .card {
   background-color: var(--color-secondary);
-  width: 500px;
+  width: 60%;
   margin: 50px auto;
   padding: 20px;
   border-radius: 8px;
@@ -40,11 +40,9 @@
   list-style: none;
   padding: 0;
 }
-
 .tarefaItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: table;
+  width: 100%;
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid var(--color-tertiary);
@@ -58,9 +56,36 @@
   background-color: #e8f5e9;
 }
 
-.tarefaNome {
-  font-size: 1.1rem;
+.tarefaItem span {
+  display: table-cell;
+  padding: 0 10px;
+  vertical-align: middle;
+  font-size: 1rem;
   color: var(--color-tertiary);
+}
+
+.tarefaItem .tarefaNome {
+  width: 40%;
+}
+
+.tarefaItem .tarefaStatus {
+  width: 30%;
+}
+
+.tarefaItem .tarefaUsuario {
+  width: 30%;
+}
+
+.tarefaStatus.naoIniciado {
+  color: var(--color-warning);
+}
+
+.tarefaStatus.emAndamento {
+  color: var(--color-tertiary);
+}
+
+.tarefaStatus.completed {
+  color: var(--color-warning);
 }
 
 .tarefaStatus.naoIniciado {

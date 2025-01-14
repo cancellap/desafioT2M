@@ -1,10 +1,10 @@
-﻿using GerenciadorDeProjetos.Domain.DTOs;
+﻿using GerenciadorDeProjetos.Application.DTOs;
 using GerenciadorDeProjetos.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorDeProjetos.Presentation.Controllers
 {
-
+    [Route("api")]
     public class AuthenticationController : ControllerBase 
     {
         private readonly TokenService _tokenService;

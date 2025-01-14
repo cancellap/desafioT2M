@@ -36,7 +36,7 @@ public class Projeto
 
         DataInicio = DateTime.TryParse(projetoDto.DataInicio, out var dataInicio) ? dataInicio.Date : DateTime.MinValue;
         DataTermino = DateTime.TryParse(projetoDto.DataTermino, out var dataTermino) ? dataTermino.Date : DateTime.MinValue;
-
+        UsuarioId = projetoDto.UsuarioId;
         Tarefas = projetoDto.Tarefas?.Select(tarefaDto => new Tarefa(tarefaDto)).ToList() ?? new List<Tarefa>();
     }
 

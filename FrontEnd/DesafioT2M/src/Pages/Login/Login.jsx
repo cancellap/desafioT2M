@@ -2,9 +2,9 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
+import { loginUser } from "../../Service/Api";
 
 const schema = Yup.object().shape({
   username: Yup.string().required("Username é obrigatório"),
@@ -22,13 +22,10 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
+  const handleLoginSubmit = async (data) => {
     try {
-      const response = await axios.post("http://localhost:5029/login", data);
-      console.log(response.data);
-      //sei que é nao era pra retornar o token dentro da response, 
-      // mas nao estava conseguindo acessar o headers
-      const token = response.data.token;
+      const response = await loginUser(data);
+      const token = response.token;
       if (token) {
         localStorage.setItem("token", token);
         localStorage.setItem("autenticado", true);
@@ -46,7 +43,7 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
+    <form onSubmit={handleSubmit(handleLoginSubmit)} className={styles.formContainer}>
       <div>
         <label htmlFor="username" className={styles.label}>
           Username
@@ -54,9 +51,7 @@ export default function Login() {
         <input
           id="username"
           type="text"
-          className={`${styles.input} ${
-            errors.username ? styles.inputError : ""
-          }`}
+          className={`${styles.input} ${errors.username ? styles.inputError : ""}`}
           {...register("username")}
         />
         {errors.username && (
@@ -71,9 +66,7 @@ export default function Login() {
         <input
           id="password"
           type="password"
-          className={`${styles.input} ${
-            errors.password ? styles.inputError : ""
-          }`}
+          className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
           {...register("password")}
         />
         {errors.password && (

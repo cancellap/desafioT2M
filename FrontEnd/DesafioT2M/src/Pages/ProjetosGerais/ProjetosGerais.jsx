@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ProjetoCard from "../../Components/ProjetoCard/ProjetoCard";
-import styles from './ProjetosGerais.module.css'; 
+import styles from "./ProjetosGerais.module.css";
 import BotaoFlutuante from "../../Components/BotaoAddProjeto/BotaoFlutuante";
+import { getProjetos } from "../../Service/Api";
 
 export default function ProjetosGerais() {
   const [projetos, setProjetos] = useState([]);
@@ -9,13 +10,9 @@ export default function ProjetosGerais() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getProjetos = async () => {
+    const fetchProjetos = async () => {
       try {
-        const response = await fetch("http://localhost:5029/api/projeto");
-        if (!response.ok) {
-          throw new Error("Erro ao buscar projetos");
-        }
-        const data = await response.json();
+        const data = await getProjetos();
         setProjetos(data);
       } catch (err) {
         setError(err.message);
@@ -24,7 +21,7 @@ export default function ProjetosGerais() {
       }
     };
 
-    getProjetos();
+    fetchProjetos();
   }, []);
 
   if (loading) return <p>Carregando...</p>;
@@ -32,8 +29,8 @@ export default function ProjetosGerais() {
 
   return (
     <div className={styles.main}>
-      <BotaoFlutuante/>
-      <h1>Lista de Projetos</h1>
+      <BotaoFlutuante />
+      <h1>Projetos Gerais</h1>
       {projetos.length > 0 ? (
         <div className={styles.projetosGerais}>
           {projetos.map((projeto) => (

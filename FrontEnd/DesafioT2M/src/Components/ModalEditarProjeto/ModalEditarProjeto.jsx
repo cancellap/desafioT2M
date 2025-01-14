@@ -1,77 +1,72 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { updateTarefa } from "../../Service/Api";
-import styles from "./ModalEditarTarefa.module.css";
+import { updateProjeto } from "../../Service/Api";
+import styles from "./ModalEditarProjeto.module.css";
 
 const validationSchema = Yup.object({
-  nome: Yup.string().required("Nome da tarefa é obrigatório"),
+  nome: Yup.string().required("Nome do projeto é obrigatório"),
   descricao: Yup.string().required("Descrição é obrigatória"),
-  prazo: Yup.string().required("Prazo é obrigatório"),
-  statusTarefa: Yup.number().required("Status da tarefa é obrigatório"),
+  dataInicio: Yup.string().required("Data de início é obrigatória"),
+  dataTermino: Yup.string().required("Data de término é obrigatória"),
 });
 
-export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
+export default function ModalEditarProjeto({ projeto, onClose, onSave }) {
   const [initialValues, setInitialValues] = useState({
     nome: "",
     descricao: "",
-    prazo: "",
-    statusTarefa: 0,
+    dataInicio: "",
+    dataTermino: "",
   });
 
   useEffect(() => {
-    if (tarefa) {
+    if (projeto) {
       setInitialValues({
-        nome: tarefa.nome || "",
-        descricao: tarefa.descricao || "",
-        prazo: tarefa.prazo || "",
-        statusTarefa: tarefa.statusTarefa || 0,
+        nome: projeto.nome || "",
+        descricao: projeto.descricao || "",
+        dataInicio: projeto.dataInicio || "",
+        dataTermino: projeto.dataTermino || "",
       });
     }
-  }, [tarefa]);
-
-  const getStatusTarefaValue = (status) => {
-    switch (status) {
-      case "NaoIniciado":
-        return 0;
-      case "EmAndamento":
-        return 1;
-      case "Concluida":
-        return 2;
-      default:
-        return 0;
-    }
-  };
+  }, [projeto]);
 
   const handleSave = async (values) => {
-    if (!tarefa.id) {
-      console.error("ID da tarefa é necessário");
+    if (!projeto?.id) {
+      console.error("ID do projeto é necessário");
       return;
     }
 
-    const updatedTarefa = {
+    const updatedProjeto = {
       nome: values.nome,
       descricao: values.descricao,
-      prazo: values.prazo,
-      statusTarefa: getStatusTarefaValue(values.statusTarefa),
-      usuarioId: tarefa.usuarioId,
-      projetoId: tarefa.projetoId,
+      dataInicio: values.dataInicio,
+      dataTermino: values.dataTermino,
     };
 
     try {
-      const response = await updateTarefa(tarefa.id, updatedTarefa);
-      console.log("Tarefa atualizada com sucesso:", response);
-      onSave(updatedTarefa);
+      const token = localStorage.getItem("token");
+      const updatedData = await updateProjeto(
+        projeto.id,
+        updatedProjeto,
+        token
+      );
+      console.log("Projeto atualizado com sucesso:", updatedData);
+      onSave(updatedData);
       onClose();
     } catch (error) {
-      console.error("Erro ao atualizar tarefa:", error);
+      alert(
+        error.response?.status !== 200
+          ? "Só é possível editar projetos próprios."
+          : "Erro ao atualizar o projeto."
+      );
     }
+    fetchProjetoData()
   };
 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        <h2>Editar Tarefa</h2>
+        <h2>Editar Projeto</h2>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -79,7 +74,7 @@ export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
         >
           <Form>
             <div className={styles.label}>
-              <label>Nome da Tarefa:</label>
+              <label>Nome do Projeto:</label>
               <Field className={styles.input} type="text" name="nome" />
               <ErrorMessage
                 name="nome"
@@ -97,23 +92,19 @@ export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
               />
             </div>
             <div className={styles.label}>
-              <label>Prazo:</label>
-              <Field className={styles.input} type="date" name="prazo" />
+              <label>Data de Início:</label>
+              <Field className={styles.input} type="date" name="dataInicio" />
               <ErrorMessage
-                name="prazo"
+                name="dataInicio"
                 component="div"
                 className={styles.error}
               />
             </div>
             <div className={styles.label}>
-              <label>Status da Tarefa:</label>
-              <Field as="select" className={styles.select} name="statusTarefa">
-                <option value={null}>Selecione</option>
-                <option value={0}>Não Iniciada</option>
-                <option value={1}>Em Andamento</option>
-              </Field>
+              <label>Data de Término:</label>
+              <Field className={styles.input} type="date" name="dataTermino" />
               <ErrorMessage
-                name="statusTarefa"
+                name="dataTermino"
                 component="div"
                 className={styles.error}
               />

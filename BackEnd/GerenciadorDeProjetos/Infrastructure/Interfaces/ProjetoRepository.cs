@@ -2,7 +2,7 @@
 using Dapper;
 using GerenciadorDeProjetos.Infrastructure.Data;
 using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.DTOs;
+using GerenciadorDeProjetos.Application.DTOs;
 
 namespace GerenciadorDeProjetos.Infrastructure.Interfaces
 {

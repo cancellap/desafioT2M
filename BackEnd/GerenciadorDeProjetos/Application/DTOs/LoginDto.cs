@@ -1,4 +1,4 @@
-﻿namespace GerenciadorDeProjetos.Domain.DTOs
+﻿namespace GerenciadorDeProjetos.Application.DTOs
 {
     public record LoginDto
     {

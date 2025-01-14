@@ -1,9 +1,5 @@
-﻿using GerenciadorDeProjetos.Domain.DTOs;
-using GerenciadorDeProjetos.Domain.Entities;
-using GerenciadorDeProjetos.Domain.Services;
-using GerenciadorDeProjetos.Infrastructure.Interfaces;
+﻿using GerenciadorDeProjetos.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace GerenciadorDeProjetos.Web.Controllers
 {
@@ -20,23 +16,32 @@ namespace GerenciadorDeProjetos.Web.Controllers
 
         [HttpPost]
         [HttpPost]
-        public IActionResult AdicionarTarefa([FromBody] TarefaInsertDto tarefaDTO)
+        public IActionResult AdicionarTarefa([FromBody] TarefaInsertDto tarefaInsertDto)
         {
             try
             {
-                if (tarefaDTO == null)
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new { message = "Token de autorização não fornecido." });
+                }
+
+                var token = authorizationHeader.Substring(7).Trim();
+
+                if (tarefaInsertDto == null)
                 {
                     return BadRequest(new { message = "Os dados da tarefa não podem ser nulos." });
                 }
 
-                if (string.IsNullOrWhiteSpace(tarefaDTO.Nome) ||
-                    string.IsNullOrWhiteSpace(tarefaDTO.Descricao) ||
-                    tarefaDTO.Prazo == default(DateTime))
+                if (string.IsNullOrWhiteSpace(tarefaInsertDto.Nome) ||
+                    string.IsNullOrWhiteSpace(tarefaInsertDto.Descricao) ||
+                    tarefaInsertDto.Prazo == default(DateTime))
                 {
                     return BadRequest(new { message = "Nome, descrição e prazo são obrigatórios." });
                 }
 
-                var tarefa = _tarefaService.AdicionarTarefa(tarefaDTO);
+                var tarefa = _tarefaService.AdicionarTarefa(tarefaInsertDto, token);
 
                 if (tarefa != null)
                 {

@@ -1,4 +1,4 @@
-﻿using GerenciadorDeProjetos.Domain.DTOs;
+﻿using GerenciadorDeProjetos.Application.DTOs;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class ProjetoDto

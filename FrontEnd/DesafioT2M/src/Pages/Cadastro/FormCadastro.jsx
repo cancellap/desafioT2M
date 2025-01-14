@@ -2,18 +2,9 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { checkUsername, addUsuario } from "../../Service/Api";
 import styles from "./Cadastro.module.css";
-
-const checkUsername = async (username) => {
-  try {
-    const response = await axios.post(`http://localhost:5029/api/usuario/username/${username}`);
-    return response.data ? true : false; 
-  } catch {
-    return false; 
-  }
-};
 
 const schema = Yup.object().shape({
   nome: Yup.string().required("Nome é obrigatório"),
@@ -22,9 +13,8 @@ const schema = Yup.object().shape({
     .required("Username é obrigatório")
     .test("check-username", "Username já existe", async (value) => {
       if (!value) return true; 
-      const exists = await checkUsername(value);
+      const exists = await checkUsername(value);  
       return !exists; 
-      //queria que mostrasse para na tela que o usuario ja existe porem nao deu tempo
     }),
   password: Yup.string().required("Senha é obrigatória"),
   passwordConfirm: Yup.string()
@@ -46,8 +36,8 @@ export default function FormCadastro() {
   const onSubmit = async (data) => {
     try {
       const payload = { ...data, tarefas: [] };
-      const response = await axios.post("http://localhost:5029/api/usuario", payload);
-      console.log("Cadastro bem-sucedido", response.data);
+      const response = await addUsuario(payload); 
+      console.log("Cadastro bem-sucedido", response);
       navigate("/login");
     } catch (error) {
       console.error("Erro no cadastro", error);

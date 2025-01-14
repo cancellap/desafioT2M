@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using GerenciadorDeProjetos.Domain.DTOs;
+using GerenciadorDeProjetos.Application.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
 using GerenciadorDeProjetos.Domain.Enum;
 

@@ -2,7 +2,7 @@
 using GerenciadorDeProjetos.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using GerenciadorDeProjetos.Infrastructure.Data;
-using GerenciadorDeProjetos.Domain.DTOs;
+using GerenciadorDeProjetos.Application.DTOs;
 
 
 namespace GerenciadorDeProjetos.Infrastructure.Interfaces

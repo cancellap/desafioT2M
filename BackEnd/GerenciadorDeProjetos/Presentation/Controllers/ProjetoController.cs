@@ -111,12 +111,22 @@ namespace GerenciadorDeProjetos.Web.Controllers
         {
             try
             {
+
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new { message = "Token de autorização não fornecido." });
+                }
+
+                var token = authorizationHeader.Substring(7).Trim();
+
                 if (projeto == null)
                 {
                     return BadRequest(new { message = "Dados do projeto não podem ser nulos." });
                 }
 
-                bool sucesso = _projetoService.AtualizarProjeto(id, projeto.Nome, projeto.Descricao, projeto.DataInicio, projeto.DataTermino);
+                bool sucesso = _projetoService.AtualizarProjeto(id, projeto.Nome, projeto.Descricao, projeto.DataInicio, projeto.DataTermino, token);
 
                 if (sucesso)
                 {

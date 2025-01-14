@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./DetalhesProjeto.module.css";
-import { getUsuario } from "../../Service/Api";
-import { FaEdit } from "react-icons/fa";
-import { FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus, FaCheck } from "react-icons/fa";
 import ModalEditarTarefa from "../../Components/ModalEditarTarefa/ModalEditarTarefa";
+import ModalAddTarefa from "../../Components/ModalAddTarefa/ModalAddTarefa";
+import ModalEditarProjeto from "../../Components/ModalEditarProjeto/ModalEditarProjeto"; 
+import {
+  fetchProjeto,
+  createTarefa,
+  deleteTarefa,
+  editProjeto,
+} from "../../Service/Api";
 
 export default function DetalhesProjeto() {
   const { id } = useParams();
@@ -14,94 +20,117 @@ export default function DetalhesProjeto() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTarefa, setSelectedTarefa] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [usuarioNome, setUsuarioNome] = useState("");
+  const [isEditProjetoModalOpen, setIsEditProjetoModalOpen] = useState(false);
 
-  const getProjeto = async () => {
+  const token = localStorage.getItem("token");
+
+  const loadProjetoData = async () => {
     try {
-      const response = await fetch(`http://localhost:5029/api/projeto/${id}`);
-      if (!response.ok) {
-        throw new Error("Erro ao buscar detalhes do projeto");
-      }
-      const data = await response.json();
-      setProjeto(data);
+      const data = await fetchProjeto(id);
+      setProjeto(data.projeto);
+      setUsuarioNome(data.usuarioNome);
+      setTarefasComUsuarios(data.tarefasComUsuarios);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const tarefasComUsuarios = await Promise.all(
-        data.tarefas.map(async (tarefa) => {
-          const usuarioData = await getUsuario(tarefa.usuarioId);
-          return {
-            ...tarefa,
-            usuarioNome: usuarioData.nome,
-          };
-        })
+  useEffect(() => {
+    loadProjetoData();
+  }, [id]);
+
+  const getStatus = (statusTarefa) => {
+    const status = {
+      NaoIniciado: "Não Iniciada",
+      EmAndamento: "Em Andamento",
+    };
+    return status[statusTarefa] || "Desconhecido";
+  };
+
+  const handleEditClick = (tarefa) => {
+    setSelectedTarefa(tarefa);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveTarefa = async (updatedTarefa) => {
+    setTarefasComUsuarios((prev) =>
+      prev.map((tarefa) =>
+        tarefa.id === updatedTarefa.id ? updatedTarefa : tarefa
+      )
+    );
+    await loadProjetoData();
+  };
+
+
+  const handleDeleteTarefa = async (idTarefa) => {
+    try {
+      await deleteTarefa(idTarefa, token);
+      await loadProjetoData();
+    } catch (err) {
+      alert(
+        err.response?.status !== 200
+          ? "Só é possível concluir tarefas próprias."
+          : "Erro ao excluir a tarefa."
       );
-      setTarefasComUsuarios(tarefasComUsuarios);
+    }
+  };
+
+  const handleEditProjeto = async (projetoAtualizado) => {
+    try {
+      const updatedProjeto = await editProjeto(id, projetoAtualizado);
+      setProjeto(updatedProjeto);
+      setIsEditProjetoModalOpen(false);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getProjeto();
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
-
-  const getStatus = (statusTarefa) => {
-    switch (statusTarefa) {
-      case "NaoIniciado":
-        return "Não Iniciada";
-      case "EmAndamento":
-        return "Em Andamento";
-      default:
-        return "Desconhecido";
-    }
-  };
-
-  const handleEditClick = (tarefa) => {
-    setSelectedTarefa(tarefa);
-    setIsModalOpen(true);
-  };
-
-  const handleSaveTarefa = async (updatedTarefa) => {
-    setTarefasComUsuarios((prevTarefas) =>
-      prevTarefas.map((tarefa) =>
-        tarefa.id === updatedTarefa.id ? updatedTarefa : tarefa
-      )
-    );
-
-    await getProjeto();
-  };
-
   if (loading) return <p>Carregando...</p>;
-  if (error) return <p>Erro: {error}</p>;
 
   return (
     <div className={styles.card}>
-      <h1>{projeto.nome}</h1>
-      <p>Início: {new Date(projeto.dataInicio).toLocaleDateString()}</p>
-      <p>Término: {new Date(projeto.dataTermino).toLocaleDateString()}</p>
+      <h1>
+        {projeto.nome}
+        <FaEdit
+          color="black"
+          style={{
+            fontSize: "20px",
+            cursor: "pointer",
+            marginLeft: "13",
+            marginBottom: "3",
+          }}
+          onClick={() => setIsEditProjetoModalOpen(true)}
+        />
+      </h1>
+      <p>
+        <strong>Criado por:</strong> {usuarioNome}
+      </p>
+      <p>
+        <strong>Início:</strong>{" "}
+        {new Date(projeto.dataInicio).toLocaleDateString()}
+      </p>
+      <p>
+        <strong>Término</strong>:{" "}
+        {new Date(projeto.dataTermino).toLocaleDateString()}
+      </p>
       <p className={styles.descricao}>{projeto.descricao}</p>
 
       <div className={styles.tarefasContainer}>
         <h2 className={styles.tarefasTitle}>
-          Tarefas{" "}
+          Tarefas
           <FaPlus
+            color="black"
             size={25}
-            style={{
-              cursor: "pointer",
-              marginTop: "1",
-            }}
+            style={{ cursor: "pointer" }}
+            onClick={() => setIsAddModalOpen(true)}
           />
         </h2>
-        {tarefasComUsuarios && tarefasComUsuarios.length > 0 ? (
+        {tarefasComUsuarios.length ? (
           <ul className={styles.tarefasLista}>
             {tarefasComUsuarios.map((tarefa) => (
               <li
@@ -111,7 +140,9 @@ export default function DetalhesProjeto() {
                 }`}
               >
                 <span className={styles.tarefaNome}>{tarefa.nome}</span>
-                <span>{tarefa.usuarioNome}</span>
+                <span className={styles.tarefaUsuario}>
+                  {tarefa.usuarioNome}
+                </span>
                 <span
                   className={`${styles.tarefaStatus} ${
                     tarefa.statusTarefa === "NaoIniciado"
@@ -121,7 +152,18 @@ export default function DetalhesProjeto() {
                       : ""
                   }`}
                 >
-                  {getStatus(tarefa.statusTarefa)}{" "}
+                  {getStatus(tarefa.statusTarefa)}
+                </span>
+                <span>
+                  <FaCheck
+                    color="black"
+                    style={{
+                      fontSize: "20px",
+                      cursor: "pointer",
+                      marginTop: "1",
+                    }}
+                    onClick={() => handleDeleteTarefa(tarefa.id)}
+                  />
                 </span>
                 <span>
                   <FaEdit
@@ -149,11 +191,26 @@ export default function DetalhesProjeto() {
         Voltar
       </button>
 
-      {isModalOpen && (
+      {isEditModalOpen && (
         <ModalEditarTarefa
           tarefa={selectedTarefa}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsEditModalOpen(false)}
           onSave={handleSaveTarefa}
+        />
+      )}
+      {isAddModalOpen && (
+        <ModalAddTarefa
+          projetoId={id}
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={handleAddTarefa}
+        />
+      )}
+      {isEditProjetoModalOpen && (
+        <ModalEditarProjeto
+          projeto={projeto}
+          projetoId={id}
+          onClose={() => setIsEditProjetoModalOpen(false)}
+          onSave={handleEditProjeto}
         />
       )}
     </div>

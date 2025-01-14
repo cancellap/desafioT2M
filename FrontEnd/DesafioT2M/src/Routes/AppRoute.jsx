@@ -1,12 +1,12 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../Pages/Login/Login";
-import Cadastro from "../Pages/Cadastro/Cadastro";
 import ProjetosGerais from "../Pages/ProjetosGerais/ProjetosGerais";
 import ProjetosPropios from "../Pages/ProjetosPropios/ProjetosPropios";
-import CreateProjeto from "../Pages/CreateProjeto/CreateProjeto";
 import ProtectedRoute from "./RouteProtegida";
 import DetalhesProjeto from "../Pages/DetalhesProjeto/DetalhesProjeto";
+import CreateProjeto from "../Pages/CreateProjeto/CreateProjeto";
+import FormCadastro from "../Pages/Cadastro/FormCadastro";
 
 export default function AppRoute() {
   const auth = localStorage.getItem("autenticado");
@@ -14,8 +14,9 @@ export default function AppRoute() {
 
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/cadastro" element={<Cadastro />} />
+      <Route path="/cadastro" element={<FormCadastro />} />
       <Route
         path="/projetosGerais"
         element={

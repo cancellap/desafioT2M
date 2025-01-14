@@ -1,4 +1,4 @@
-﻿using GerenciadorDeProjetos.Domain.DTOs;
+﻿using GerenciadorDeProjetos.Application.DTOs;
 using GerenciadorDeProjetos.Domain.Entities;
 using GerenciadorDeProjetos.Domain.Exceptions;
 using GerenciadorDeProjetos.Infrastructure.Interfaces;

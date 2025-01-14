@@ -42,7 +42,7 @@ namespace GerenciadorDeProjetos.Application.Services
             try
             {
                 var projeto = _projetoRepository.GetById(id);
-                return projeto; 
+                return projeto;
             }
             catch (Exception ex)
             {
@@ -81,10 +81,12 @@ namespace GerenciadorDeProjetos.Application.Services
             }
         }
 
-        public bool AtualizarProjeto(int id, string nome, string descricao, DateTime dataInicio, DateTime dataTermino)
+        public bool AtualizarProjeto(int id, string nome, string descricao, DateTime dataInicio, DateTime dataTermino, string token)
         {
             try
             {
+                int idUsuario = _tokenService.GetIdToken(token);
+
                 if (id <= 0)
                 {
                     Console.WriteLine("ID inválido." + id);
@@ -101,9 +103,15 @@ namespace GerenciadorDeProjetos.Application.Services
 
                 if (projeto == null)
                 {
-                    Console.WriteLine($"Projeto com ID {id} não encontrado.");
                     return false;
                 }
+
+                if (idUsuario != projeto.UsuarioId)
+                {
+                    Console.WriteLine($"ID do usuário do token: {idUsuario}, ID do projeto: {projeto.UsuarioId}");
+                    return false;
+                }
+
 
                 projeto.Id = id;
                 projeto.Nome = nome;

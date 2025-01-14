@@ -2,8 +2,8 @@ import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styles from "./CreateProjeto.module.css"; // Importando o CSS module
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { postProjeto } from "../../Service/Api";
 
 export default function CreateProjeto() {
   const validationSchema = Yup.object({
@@ -35,36 +35,17 @@ export default function CreateProjeto() {
     tarefas: [],
   };
 
-  const postProjeto = (projeto) => {
-    const url = "http://localhost:5029/api/projeto";
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.error("Token não encontrado. Faça login novamente.");
-      return;
-    }
-    axios
-      .post(url, projeto, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        console.log("Projeto criado com sucesso:", response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao criar projeto:", error.message);
-        if (error.response) {
-          console.error("Detalhes do erro:", error.response.data);
-        }
-        alert("Erro ao criar projeto. Verifique os dados e tente novamente.");
-      });
-  };
-
   const navigate = useNavigate();
 
-  const handleSubmit = (values) => {
-    postProjeto(values);
-    navigate("/projetosGerais")
-    console.log(values);
+  const handleSubmit = async (values) => {
+    try {
+      const projetoCriado = await postProjeto(values); // Usando a função do serviço
+      if (projetoCriado) {
+        navigate("/projetosGerais");
+      }
+    } catch (error) {
+      alert("Erro ao criar projeto. Verifique os dados e tente novamente.");
+    }
   };
 
   return (
