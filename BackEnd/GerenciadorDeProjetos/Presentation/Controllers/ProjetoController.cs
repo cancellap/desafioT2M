@@ -174,7 +174,7 @@ namespace GerenciadorDeProjetos.Web.Controllers
                 }
                 else
                 {
-                    return StatusCode(500, new { message = "Falha ao excluir o projeto." });
+                    return StatusCode(403, new { message = "Falha ao excluir o projeto." });
                 }
             }
             catch (Exception ex)

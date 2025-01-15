@@ -25,6 +25,7 @@ export default function DetalhesProjeto() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [usuarioNome, setUsuarioNome] = useState("");
   const [isEditProjetoModalOpen, setIsEditProjetoModalOpen] = useState(false);
+  const [tarefas, setTarefas] = useState([]);
 
   const token = localStorage.getItem("token");
 
@@ -32,6 +33,7 @@ export default function DetalhesProjeto() {
     try {
       const data = await fetchProjeto(id);
       setProjeto(data.projeto);
+      setTarefas(data.projeto.tarefas);
       setUsuarioNome(data.usuarioNome);
       setTarefasComUsuarios(data.tarefasComUsuarios);
     } catch (err) {
@@ -88,11 +90,21 @@ export default function DetalhesProjeto() {
   const handleDeleteProjeto = async (id) => {
     const token = localStorage.getItem("token");
     try {
-      console.log(id);
-      
+      if (tarefas && tarefas.length > 0) {
+        alert(
+          "Não é possivel deletar projeto que ainda possuem tarefas em aberto"
+        );
+        return;
+      }
       await deleteProjeto(id, token);
       navigate("/projetosGerais");
-    } catch (error) {}
+    } catch (error) {
+      alert(
+        error.response?.status !== 200
+          ? "Não é possivel deletar projetos não propios."
+          : "Erro ao excluir a tarefa."
+      );
+    }
   };
 
   if (loading) return <p>Carregando...</p>;
