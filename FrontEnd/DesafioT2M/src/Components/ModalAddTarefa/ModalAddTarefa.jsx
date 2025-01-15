@@ -98,9 +98,9 @@ export default function ModalAddTarefa({ projetoId, onClose, onSave }) {
             <div className={styles.label}>
               <label>Status da Tarefa:</label>
               <Field as="select" className={styles.select} name="statusTarefa">
+                <option value={null}>Selecione</option>
                 <option value={0}>Não Iniciada</option>
                 <option value={1}>Em Andamento</option>
-                <option value={2}>Concluída</option>
               </Field>
               <ErrorMessage
                 name="statusTarefa"

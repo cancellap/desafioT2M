@@ -57,7 +57,6 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                 var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
                 var userId = jsonToken?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
 
-                Console.WriteLine($"ID extraído: {userId}");
 
                 if (int.TryParse(userId, out int id))
                 {

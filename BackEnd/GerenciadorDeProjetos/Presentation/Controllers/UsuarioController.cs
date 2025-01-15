@@ -11,9 +11,11 @@ namespace GerenciadorDeProjetos.Web.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly UsuarioService _usuarioService;
+        private readonly RabbitMqService _rabbitMqService;
 
-        public UsuarioController(UsuarioService usuarioService)
+        public UsuarioController(UsuarioService usuarioService, RabbitMqService rabbitMqService)
         {
+            _rabbitMqService = rabbitMqService;
             _usuarioService = usuarioService;
         }
 
@@ -28,6 +30,8 @@ namespace GerenciadorDeProjetos.Web.Controllers
                 }
 
                 var usuarioCriado = _usuarioService.AdicionarUsuario(usuarioInsertDto);
+                //string message = $"Usuario cadastrado: {usuarioCriado.Nome}";
+                //_rabbitMqService.SendMessage(message);
 
                 if (usuarioCriado != null)
                 {
@@ -52,9 +56,6 @@ namespace GerenciadorDeProjetos.Web.Controllers
                 return StatusCode(500, new { message = $"Erro interno: {ex.Message}" });
             }
         }
-
-
-
 
 
         [HttpGet("{id}")]

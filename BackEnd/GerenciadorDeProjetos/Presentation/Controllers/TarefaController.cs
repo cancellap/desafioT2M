@@ -65,14 +65,14 @@ namespace GerenciadorDeProjetos.Web.Controllers
         {
             try
             {
-                var tarefaDto = _tarefaService.ObterTarefaPorId(id); 
+                var tarefaDto = _tarefaService.ObterTarefaPorId(id);
 
                 if (tarefaDto == null)
                 {
                     return NotFound(new { message = "Tarefa não encontrada." });
                 }
 
-                return Ok(tarefaDto); 
+                return Ok(tarefaDto);
             }
             catch (Exception ex)
             {
@@ -96,7 +96,7 @@ namespace GerenciadorDeProjetos.Web.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizarTarefa(int id, [FromBody] Tarefa tarefa)
+        public IActionResult AtualizarTarefa(int id, [FromBody] TarefaInsertDto tarefa)
         {
             try
             {
@@ -105,19 +105,20 @@ namespace GerenciadorDeProjetos.Web.Controllers
                     return BadRequest("Dados da tarefa não podem ser nulos.");
                 }
 
-                bool sucesso = _tarefaService.AtualizarTarefa(
-                    id,
-                    tarefa.Nome,
-                    tarefa.Descricao,
-                    tarefa.Prazo,
-                    tarefa.StatusTarefa,
-                    tarefa.UsuarioId,
-                    tarefa.ProjetoId
-                );
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
 
-                if (sucesso)
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
                 {
-                    return Ok(new { message = "Tarefa atualizada com sucesso!" , tarefa});
+                    return Unauthorized(new { message = "Token de autorização não fornecido." });
+                }
+
+                var token = authorizationHeader.Substring(7).Trim();
+
+                var tarefaAtt = _tarefaService.AtualizarTarefa(id ,tarefa, token);
+
+                if (tarefaAtt != null)
+                {
+                    return Ok(tarefaAtt);
                 }
                 else
                 {

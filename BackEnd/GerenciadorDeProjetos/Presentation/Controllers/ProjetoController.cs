@@ -147,7 +147,17 @@ namespace GerenciadorDeProjetos.Web.Controllers
         {
             try
             {
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new { message = "Token de autorização não fornecido." });
+                }
+
+                var token = authorizationHeader.Substring(7).Trim();
+
                 var projeto = _projetoService.ObterProjetoPorId(id);
+
                 if (projeto == null)
                 {
                     return NotFound(new { message = "Projeto não encontrado." });
@@ -157,7 +167,7 @@ namespace GerenciadorDeProjetos.Web.Controllers
                     return BadRequest(new { message = "Não é possível deletar projetos que possuem tarefas associadas." });
                 }
 
-                bool sucesso = _projetoService.ExcluirProjeto(id);
+                bool sucesso = _projetoService.ExcluirProjeto(id, token);
                 if (sucesso)
                 {
                     return Ok(new { message = "Projeto excluído com sucesso!" });

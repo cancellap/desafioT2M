@@ -8,7 +8,9 @@ const validationSchema = Yup.object({
   nome: Yup.string().required("Nome da tarefa é obrigatório"),
   descricao: Yup.string().required("Descrição é obrigatória"),
   prazo: Yup.string().required("Prazo é obrigatório"),
-  statusTarefa: Yup.number().required("Status da tarefa é obrigatório"),
+  statusTarefa: Yup.string()
+  .oneOf(["NaoIniciado", "EmAndamento", "Concluida"], "Status inválido")
+  .required("Status da tarefa é obrigatório"),
 });
 
 export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
@@ -16,8 +18,13 @@ export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
     nome: "",
     descricao: "",
     prazo: "",
-    statusTarefa: 0,
+    statusTarefa: "NaoIniciado",
   });
+
+  const statusMapReverse = {
+    0: "NaoIniciado",
+    1: "EmAndamento",
+  };
 
   useEffect(() => {
     if (tarefa) {
@@ -25,23 +32,10 @@ export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
         nome: tarefa.nome || "",
         descricao: tarefa.descricao || "",
         prazo: tarefa.prazo || "",
-        statusTarefa: tarefa.statusTarefa || 0,
+        statusTarefa: statusMapReverse[tarefa.statusTarefa] || "NaoIniciado",
       });
     }
   }, [tarefa]);
-
-  const getStatusTarefaValue = (status) => {
-    switch (status) {
-      case "NaoIniciado":
-        return 0;
-      case "EmAndamento":
-        return 1;
-      case "Concluida":
-        return 2;
-      default:
-        return 0;
-    }
-  };
 
   const handleSave = async (values) => {
     if (!tarefa.id) {
@@ -53,18 +47,26 @@ export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
       nome: values.nome,
       descricao: values.descricao,
       prazo: values.prazo,
-      statusTarefa: getStatusTarefaValue(values.statusTarefa),
+      statusTarefa: values.statusTarefa,
       usuarioId: tarefa.usuarioId,
       projetoId: tarefa.projetoId,
     };
-
+    const token = localStorage.getItem("token");
     try {
-      const response = await updateTarefa(tarefa.id, updatedTarefa);
-      console.log("Tarefa atualizada com sucesso:", response);
+      const resposta = await updateTarefa(tarefa.id, updatedTarefa, token);
+      console.log("Tarefa atualizada com sucesso:", resposta);
       onSave(updatedTarefa);
       onClose();
     } catch (error) {
-      console.error("Erro ao atualizar tarefa:", error);
+      if (error.response) {
+        if (error.response.status === 403) {
+          alert("Você não tem permissão para editar esta tarefa.");
+        } else {
+          alert(`Erro ao atualizar a tarefa. Status: ${error.response.status}`);
+        }
+      } else {
+        alert("Erro ao tentar atualizar a tarefa.");
+      }
     }
   };
 
@@ -75,7 +77,17 @@ export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleSave}
+          onSubmit={(values) => {
+            const statusMap = {
+              NaoIniciado: 0,
+              EmAndamento: 1,
+              Concluida: 2,
+            };
+            handleSave({
+              ...values,
+              statusTarefa: statusMap[values.statusTarefa],
+            });
+          }}
         >
           <Form>
             <div className={styles.label}>
@@ -108,9 +120,9 @@ export default function ModalEditarTarefa({ tarefa, onClose, onSave }) {
             <div className={styles.label}>
               <label>Status da Tarefa:</label>
               <Field as="select" className={styles.select} name="statusTarefa">
-                <option value={null}>Selecione</option>
-                <option value={0}>Não Iniciada</option>
-                <option value={1}>Em Andamento</option>
+                <option value="NaoIniciado">Não Iniciada</option>
+                <option value="EmAndamento">Em Andamento</option>
+                <option value="Concluida">Concluída</option>
               </Field>
               <ErrorMessage
                 name="statusTarefa"

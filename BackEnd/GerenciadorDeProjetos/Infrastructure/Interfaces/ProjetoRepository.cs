@@ -218,8 +218,6 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                          SET nome = @nome, descricao = @descricao, data_inicio = @dataInicio, data_termino = @dataTermino 
                          WHERE id = @id";
 
-                Console.WriteLine($"Query: {query}");
-                Console.WriteLine($"Parâmetros: Nome={projeto.Nome}, Descricao={projeto.Descricao}, DataInicio={projeto.DataInicio}, DataTermino={projeto.DataTermino}, Id={projeto.Id}");
 
                 var result = conn.Execute(query, new
                 {
@@ -230,7 +228,6 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                     id = projeto.Id
                 });
 
-                Console.WriteLine($"Linhas afetadas: {result}");
                 return result > 0;
             }
             catch (Exception ex)

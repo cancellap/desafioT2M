@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./DetalhesProjeto.module.css";
-import { FaEdit, FaPlus, FaCheck } from "react-icons/fa";
+import { FaEdit, FaPlus, FaCheck, FaTrash } from "react-icons/fa";
 import ModalEditarTarefa from "../../Components/ModalEditarTarefa/ModalEditarTarefa";
 import ModalAddTarefa from "../../Components/ModalAddTarefa/ModalAddTarefa";
-import ModalEditarProjeto from "../../Components/ModalEditarProjeto/ModalEditarProjeto"; 
+import ModalEditarProjeto from "../../Components/ModalEditarProjeto/ModalEditarProjeto";
 import {
   fetchProjeto,
   createTarefa,
   deleteTarefa,
   editProjeto,
+  deleteProjeto,
 } from "../../Service/Api";
 
 export default function DetalhesProjeto() {
@@ -57,23 +58,17 @@ export default function DetalhesProjeto() {
     setIsEditModalOpen(true);
   };
 
-  const handleSaveTarefa = async (updatedTarefa) => {
-    setTarefasComUsuarios((prev) =>
-      prev.map((tarefa) =>
-        tarefa.id === updatedTarefa.id ? updatedTarefa : tarefa
-      )
-    );
+  const handleSaveTarefa = async () => {
     await loadProjetoData();
   };
-
 
   const handleDeleteTarefa = async (idTarefa) => {
     try {
       await deleteTarefa(idTarefa, token);
       await loadProjetoData();
-    } catch (err) {
+    } catch (error) {
       alert(
-        err.response?.status !== 200
+        error.response?.status !== 200
           ? "Só é possível concluir tarefas próprias."
           : "Erro ao excluir a tarefa."
       );
@@ -88,6 +83,16 @@ export default function DetalhesProjeto() {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleDeleteProjeto = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      console.log(id);
+      
+      await deleteProjeto(id, token);
+      navigate("/projetosGerais");
+    } catch (error) {}
   };
 
   if (loading) return <p>Carregando...</p>;
@@ -105,6 +110,16 @@ export default function DetalhesProjeto() {
             marginBottom: "3",
           }}
           onClick={() => setIsEditProjetoModalOpen(true)}
+        />
+        <FaTrash
+          color="black"
+          style={{
+            fontSize: "20px",
+            cursor: "pointer",
+            marginLeft: "13",
+            marginBottom: "3",
+          }}
+          onClick={() => handleDeleteProjeto(projeto.id)}
         />
       </h1>
       <p>
@@ -201,10 +216,16 @@ export default function DetalhesProjeto() {
       {isAddModalOpen && (
         <ModalAddTarefa
           projetoId={id}
-          onClose={() => setIsAddModalOpen(false)}
-          onSave={handleAddTarefa}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            loadProjetoData(); // Atualiza os dados do projeto ao fechar o modal
+          }}
+          onSave={() => {
+            loadProjetoData(); // Atualiza os dados do projeto após salvar
+          }}
         />
       )}
+
       {isEditProjetoModalOpen && (
         <ModalEditarProjeto
           projeto={projeto}

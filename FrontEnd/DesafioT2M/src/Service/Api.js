@@ -51,11 +51,12 @@ export const updateProjeto = async (id, updatedProjeto, token) => {
     }
 };
 
-export const updateTarefa = async (id, updatedTarefa) => {
+export const updateTarefa = async (id, updatedTarefa, token) => {
     try {
         const response = await api.put(`/tarefa/${id}`, updatedTarefa, {
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
         });
         return response.data;
@@ -142,6 +143,16 @@ export const createTarefa = async (novaTarefa) => {
 export const deleteTarefa = async (idTarefa, token) => {
     try {
         await api.delete(`/tarefa/${idTarefa}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+export const deleteProjeto = async (idTarefa, token) => {
+    try {
+        await api.delete(`/projeto/${idTarefa}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
     } catch (error) {

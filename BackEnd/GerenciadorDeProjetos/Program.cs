@@ -38,7 +38,12 @@ builder.Services.AddScoped<TarefaRepository>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthenticationController>();
 
+builder.Services.AddSingleton<RabbitMqService>();
+
+var consumer = new RabbitMqConsumer();
+
 var app = builder.Build();
+consumer.StartConsuming();
 
 if (app.Environment.IsDevelopment())
 {

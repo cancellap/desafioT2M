@@ -31,7 +31,6 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                     usuarioId,
                     projetoId = tarefaInsertDto.ProjetoId
                 });
-                Console.WriteLine(usuarioId);
                 if (id <= 0)
                 {
                     Console.WriteLine("Erro: ID retornado é inválido.");
@@ -113,15 +112,15 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
             }
         }
 
-        public bool Update(Tarefa tarefa)
+        public Tarefa Update(Tarefa tarefa)
         {
             try
             {
                 using var conn = new PostgresDbContext().Connection;
                 string query = @"UPDATE tarefa 
-                                 SET nome = @nome, descricao = @descricao, prazo = @prazo, status_tarefa = @statusTarefa, 
-                                     usuario_id = @usuarioId, projeto_id = @projetoId 
-                                 WHERE id = @id";
+                         SET nome = @nome, descricao = @descricao, prazo = @prazo, status_tarefa = @statusTarefa, 
+                             usuario_id = @usuarioId, projeto_id = @projetoId 
+                         WHERE id = @id";
 
                 var result = conn.Execute(query, new
                 {
@@ -129,19 +128,25 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                     nome = tarefa.Nome,
                     descricao = tarefa.Descricao,
                     prazo = tarefa.Prazo,
-                    statusTarefa = tarefa.StatusTarefa,
+                    statusTarefa = tarefa.StatusTarefa.ToString(),
                     usuarioId = tarefa.UsuarioId,
                     projetoId = tarefa.ProjetoId,
                 });
 
-                return result > 0;
+                if (result > 0)
+                {
+                    return tarefa; 
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao atualizar tarefa: {ex.Message}");
-                return false;
+                throw;
             }
         }
+
 
         public bool Delete(int id)
         {

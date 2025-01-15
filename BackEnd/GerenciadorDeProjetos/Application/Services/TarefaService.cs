@@ -8,14 +8,16 @@ namespace GerenciadorDeProjetos.Domain.Services
     public class TarefaService
     {
         private readonly TarefaRepository _tarefaRepository;
-        private readonly TokenService  _tokenService;
+        private readonly TokenService _tokenService;
+        private readonly RabbitMqService _rabbitMqService;
+        private readonly TimeSpan _intervaloVerificacao = TimeSpan.FromMinutes(0.3);
 
-        public TarefaService(TarefaRepository tarefaRepository, TokenService tokenService)
+        public TarefaService(TarefaRepository tarefaRepository, RabbitMqService rabbitMqService, TokenService tokenService)
         {
             _tarefaRepository = tarefaRepository;
+            _rabbitMqService = rabbitMqService;
             _tokenService = tokenService;
         }
-
         public TarefaDto? AdicionarTarefa(TarefaInsertDto tarefaInsertDto, string token)
         {
             try
@@ -26,8 +28,9 @@ namespace GerenciadorDeProjetos.Domain.Services
 
                 if (tarefa != null)
                 {
+                    Task.Run(() => IniciarContagemRegressiva(tarefa));
                     return new TarefaDto(tarefa);
-          
+
                 }
 
                 return null;
@@ -39,6 +42,26 @@ namespace GerenciadorDeProjetos.Domain.Services
             }
         }
 
+        private void IniciarContagemRegressiva(Tarefa tarefa)
+        {
+            var prazoRestante = tarefa.Prazo - DateTime.Now;
+
+            while (prazoRestante > TimeSpan.Zero)
+            {
+                var mensagemContagem = $"Tarefa com ID {tarefa.Id}: Faltam {prazoRestante.Days} dias," +
+                    $" {prazoRestante.Hours} horas, {prazoRestante.Minutes} minutos para o prazo e " +
+                    $"{prazoRestante.Seconds} segundos para o prazo.";
+                _rabbitMqService.SendMessage(mensagemContagem);
+                Console.WriteLine(mensagemContagem);
+
+                System.Threading.Thread.Sleep(_intervaloVerificacao);
+
+                prazoRestante = tarefa.Prazo - DateTime.Now;
+            }
+
+            var mensagemPrazoAlcancado = $"Tarefa com ID {tarefa.Id}: O prazo foi alcançado!";
+            _rabbitMqService.SendMessage(mensagemPrazoAlcancado);
+        }
 
         public TarefaDto ObterTarefaPorId(int id)
         {
@@ -78,20 +101,57 @@ namespace GerenciadorDeProjetos.Domain.Services
                 return new List<TarefaDto>();
             }
         }
-
-        public bool AtualizarTarefa(int id, string nome, string descricao, DateTime prazo, StatusTarefa status, int usuarioId, int projetoId)
+        public TarefaDto AtualizarTarefa(int id, TarefaInsertDto tarefaInsertDto, string token)
         {
             try
             {
-                var tarefa = new Tarefa(nome, descricao, prazo, status, usuarioId, projetoId) { Id = id };
-                return _tarefaRepository.Update(tarefa);
+                int idUsuarioToken = _tokenService.GetIdToken(token);
+
+                var tarefa = _tarefaRepository.GetById(id);
+                if (tarefa.UsuarioId != idUsuarioToken)
+                {
+                    throw new Exception("Só é possível editar tarefas em que você seja responsável.");
+                }
+
+
+                var tarefaAntiga = _tarefaRepository.GetById(id);
+
+                if (tarefaAntiga == null)
+                {
+                    throw new Exception($"Tarefa com ID {id} não encontrada.");
+                }
+
+                if (tarefaAntiga.StatusTarefa != tarefaInsertDto.StatusTarefa.ToString())
+                {
+                    var mensagem = $"Tarefa com ID {id} teve o status alterado de '{tarefaAntiga.StatusTarefa}' para '{tarefaInsertDto.StatusTarefa.ToString()}'";
+                    _rabbitMqService.SendMessage(mensagem);
+                }
+
+                var tarefaNew = new Tarefa(id, tarefaInsertDto.Nome,
+                    tarefaInsertDto.Descricao,
+                    tarefaInsertDto.Prazo,
+                    tarefaInsertDto.StatusTarefa,
+                    tarefaInsertDto.UsuarioId,
+                    tarefaInsertDto.ProjetoId);
+
+                var tarefaAtualizada = _tarefaRepository.Update(tarefaNew);
+
+
+                if (tarefaAtualizada == null)
+                {
+                    throw new Exception("Erro ao salvar atualização no banco de dados.");
+                }
+
+                return new TarefaDto(tarefaAtualizada);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao atualizar tarefa: {ex.Message}");
-                return false;
+                throw;
             }
         }
+
+
 
         public bool ExcluirTarefa(int id, string token)
         {
@@ -104,6 +164,9 @@ namespace GerenciadorDeProjetos.Domain.Services
                 {
                     throw new Exception("Só é possível deletar tarefas em que você seja responsável.");
                 }
+
+                var mensagemContagem = $"Tarefa com ID {id} foi concluida.";
+                _rabbitMqService.SendMessage(mensagemContagem);
 
                 return _tarefaRepository.Delete(id);
             }

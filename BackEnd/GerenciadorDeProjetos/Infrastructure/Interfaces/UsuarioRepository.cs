@@ -101,10 +101,7 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                     var tarefas = conn.Query<Tarefa>(tarefasQuery, new { id }).ToList();
                     usuario.Tarefas = tarefas;
 
-                    foreach (var tarefa in tarefas)
-                    {
-                        Console.WriteLine($"Tarefa - UsuarioId: {tarefa.UsuarioId}, ProjetoId: {tarefa.ProjetoId}, Prazo: {tarefa.Prazo}");
-                    }
+              
                 }
 
                 return usuario;
@@ -126,7 +123,6 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                 string query = @"SELECT * FROM usuario";
                 var usuarios = conn.Query<Usuario>(query).ToList();
 
-                Console.WriteLine($"Número de usuários encontrados: {usuarios.Count}");
 
                 foreach (var usuario in usuarios)
                 {
@@ -145,7 +141,6 @@ namespace GerenciadorDeProjetos.Infrastructure.Interfaces
                     var tarefas = conn.Query<Tarefa>(tarefasQuery, new { id = usuario.Id }).ToList();
                     usuario.Tarefas = tarefas;
 
-                    Console.WriteLine($"Usuário: {usuario.Id}, Tarefas Encontradas: {tarefas.Count}");
                 }
 
 

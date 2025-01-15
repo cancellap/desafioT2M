@@ -1,5 +1,6 @@
 ﻿using GerenciadorDeProjetos.Domain.Entities;
 using GerenciadorDeProjetos.Infrastructure.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace GerenciadorDeProjetos.Application.Services
 {
@@ -108,7 +109,6 @@ namespace GerenciadorDeProjetos.Application.Services
 
                 if (idUsuario != projeto.UsuarioId)
                 {
-                    Console.WriteLine($"ID do usuário do token: {idUsuario}, ID do projeto: {projeto.UsuarioId}");
                     return false;
                 }
 
@@ -132,11 +132,18 @@ namespace GerenciadorDeProjetos.Application.Services
 
 
 
-        public bool ExcluirProjeto(int id)
+        public bool ExcluirProjeto(int id, string token)
         {
             try
             {
-                return _projetoRepository.Delete(id);
+                int idUsuario = _tokenService.GetIdToken(token);
+                var projeto = _projetoRepository.GetById(id);
+
+                if (idUsuario == projeto.UsuarioId)
+                {
+                return _projetoRepository.Delete(id);       
+                }
+                return false;
             }
             catch (Exception ex)
             {

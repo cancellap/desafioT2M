@@ -23,8 +23,9 @@ public class Tarefa
 
     public Tarefa() { }
 
-    public Tarefa(string nome, string descricao, DateTime prazo, StatusTarefa status, int usuarioId, int projetoId)
+    public Tarefa(int id, string nome, string descricao, DateTime prazo, StatusTarefa status, int usuarioId, int projetoId)
     {
+        Id = id;
         Nome = nome;
         Descricao = descricao;
         Prazo = prazo;
