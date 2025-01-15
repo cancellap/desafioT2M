@@ -51,7 +51,7 @@ export default function ModalEditarProjeto({ projeto, onClose, onSave }) {
         token
       );
       console.log("Projeto atualizado com sucesso:", updatedData);
-      onSave(updatedData);
+      onSave();
       onClose();
     } catch (error) {
       alert(

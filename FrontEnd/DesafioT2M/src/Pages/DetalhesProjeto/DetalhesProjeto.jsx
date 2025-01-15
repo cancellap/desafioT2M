@@ -26,6 +26,8 @@ export default function DetalhesProjeto() {
   const [usuarioNome, setUsuarioNome] = useState("");
   const [isEditProjetoModalOpen, setIsEditProjetoModalOpen] = useState(false);
   const [tarefas, setTarefas] = useState([]);
+  const [dataInicio, setDataInicio] = useState(null);
+  const [dataTermino, setDataTermino] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -34,6 +36,8 @@ export default function DetalhesProjeto() {
       const data = await fetchProjeto(id);
       setProjeto(data.projeto);
       setTarefas(data.projeto.tarefas);
+      setDataInicio(data.projeto.dataInicio);
+      setDataTermino(data.projeto.dataTermino);
       setUsuarioNome(data.usuarioNome);
       setTarefasComUsuarios(data.tarefasComUsuarios);
     } catch (err) {
@@ -82,6 +86,8 @@ export default function DetalhesProjeto() {
       const updatedProjeto = await editProjeto(id, projetoAtualizado);
       setProjeto(updatedProjeto);
       setIsEditProjetoModalOpen(false);
+      await loadProjetoData();
+      console.log(dataInicio + " " + dataTermino);
     } catch (err) {
       setError(err.message);
     }
@@ -139,11 +145,11 @@ export default function DetalhesProjeto() {
       </p>
       <p>
         <strong>Início:</strong>{" "}
-        {new Date(projeto.dataInicio).toLocaleDateString()}
+        {new Date(projeto.dataInicio + "T00:00:00").toLocaleDateString()}
       </p>
       <p>
         <strong>Término</strong>:{" "}
-        {new Date(projeto.dataTermino).toLocaleDateString()}
+        {new Date(projeto.dataTermino + "T00:00:00").toLocaleDateString()}
       </p>
       <p className={styles.descricao}>{projeto.descricao}</p>
 
@@ -230,10 +236,10 @@ export default function DetalhesProjeto() {
           projetoId={id}
           onClose={() => {
             setIsAddModalOpen(false);
-            loadProjetoData(); // Atualiza os dados do projeto ao fechar o modal
+            loadProjetoData();
           }}
           onSave={() => {
-            loadProjetoData(); // Atualiza os dados do projeto após salvar
+            loadProjetoData();
           }}
         />
       )}
@@ -242,7 +248,10 @@ export default function DetalhesProjeto() {
         <ModalEditarProjeto
           projeto={projeto}
           projetoId={id}
-          onClose={() => setIsEditProjetoModalOpen(false)}
+          onClose={() => {
+            setIsEditProjetoModalOpen(false);
+            loadProjetoData();
+          }}
           onSave={handleEditProjeto}
         />
       )}

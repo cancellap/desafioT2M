@@ -36,7 +36,7 @@
               "RelativeDocumentMoniker": "Presentation\\Controllers\\ProjetoController.cs",
               "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Presentation\\Controllers\\ProjetoController.cs",
               "RelativeToolTip": "Presentation\\Controllers\\ProjetoController.cs",
-              "ViewState": "AgIAAI8AAAAAAAAAAAAtwLAAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAqwLAAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-01-15T12:12:40.392Z",
               "EditorCaption": ""
@@ -51,8 +51,7 @@
               "RelativeToolTip": "Application\\Services\\ProjetoService.cs",
               "ViewState": "AgIAAHYAAAAAAAAAAAAiwI4AAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-15T12:12:15.945Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-15T12:12:15.945Z"
             },
             {
               "$type": "Document",
@@ -64,8 +63,7 @@
               "RelativeToolTip": "Infrastructure\\Interfaces\\ProjetoRepository.cs",
               "ViewState": "AgIAAOQAAAAAAAAAAAD4vwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-15T12:12:14.275Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-15T12:12:14.275Z"
             }
           ]
         }

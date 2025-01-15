@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|c:\\users\\pedro\\pedro\\desafiot2m\\backend\\gerenciadordeprojetos\\presentation\\controllers\\projetocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|solutionrelative:presentation\\controllers\\projetocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|c:\\users\\pedro\\pedro\\desafiot2m\\backend\\gerenciadordeprojetos\\application\\services\\tarefaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|solutionrelative:application\\services\\tarefaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|c:\\users\\pedro\\pedro\\desafiot2m\\backend\\gerenciadordeprojetos\\application\\services\\projetoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|solutionrelative:application\\services\\projetoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|c:\\users\\pedro\\pedro\\desafiot2m\\backend\\gerenciadordeprojetos\\infrastructure\\interfaces\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|solutionrelative:infrastructure\\interfaces\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|c:\\users\\pedro\\pedro\\desafiot2m\\backend\\gerenciadordeprojetos\\infrastructure\\interfaces\\projetorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|solutionrelative:infrastructure\\interfaces\\projetorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|c:\\users\\pedro\\pedro\\desafiot2m\\backend\\gerenciadordeprojetos\\application\\services\\rabbitmqservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|solutionrelative:application\\services\\rabbitmqservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|c:\\users\\pedro\\pedro\\desafiot2m\\backend\\gerenciadordeprojetos\\application\\services\\rabbitmqconsumer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF2B0659-6C3A-4DD4-8D43-654214743420}|GerenciadorDeProjetos.csproj|solutionrelative:application\\services\\rabbitmqconsumer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,40 +35,53 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ProjetoController.cs",
-              "DocumentMoniker": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Presentation\\Controllers\\ProjetoController.cs",
-              "RelativeDocumentMoniker": "Presentation\\Controllers\\ProjetoController.cs",
-              "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Presentation\\Controllers\\ProjetoController.cs",
-              "RelativeToolTip": "Presentation\\Controllers\\ProjetoController.cs",
-              "ViewState": "AgIAAJEAAAAAAAAAAAAAALAAAAApAAAAAAAAAA==",
+              "Title": "TarefaService.cs",
+              "DocumentMoniker": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\TarefaService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\TarefaService.cs",
+              "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\TarefaService.cs",
+              "RelativeToolTip": "Application\\Services\\TarefaService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-15T12:12:40.392Z",
+              "WhenOpened": "2025-01-15T14:14:03.072Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ProjetoService.cs",
-              "DocumentMoniker": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\ProjetoService.cs",
-              "RelativeDocumentMoniker": "Application\\Services\\ProjetoService.cs",
-              "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\ProjetoService.cs",
-              "RelativeToolTip": "Application\\Services\\ProjetoService.cs",
-              "ViewState": "AgIAAHYAAAAAAAAAAAAiwI4AAAARAAAAAAAAAA==",
+              "Title": "TokenService.cs",
+              "DocumentMoniker": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Infrastructure\\Interfaces\\TokenService.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Interfaces\\TokenService.cs",
+              "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Infrastructure\\Interfaces\\TokenService.cs",
+              "RelativeToolTip": "Infrastructure\\Interfaces\\TokenService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-15T12:12:15.945Z",
+              "WhenOpened": "2025-01-15T14:13:44.1Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ProjetoRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Infrastructure\\Interfaces\\ProjetoRepository.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Interfaces\\ProjetoRepository.cs",
-              "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Infrastructure\\Interfaces\\ProjetoRepository.cs",
-              "RelativeToolTip": "Infrastructure\\Interfaces\\ProjetoRepository.cs",
-              "ViewState": "AgIAAOQAAAAAAAAAAAD4vwAAAAAAAAAAAAAAAA==",
+              "Title": "RabbitMqService.cs",
+              "DocumentMoniker": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\RabbitMqService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\RabbitMqService.cs",
+              "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\RabbitMqService.cs",
+              "RelativeToolTip": "Application\\Services\\RabbitMqService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-15T12:12:14.275Z",
+              "WhenOpened": "2025-01-15T14:13:41.634Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "RabbitMQConsumer.cs",
+              "DocumentMoniker": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\RabbitMQConsumer.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\RabbitMQConsumer.cs",
+              "ToolTip": "C:\\Users\\Pedro\\PEDRO\\DesafioT2m\\BackEnd\\GerenciadorDeProjetos\\Application\\Services\\RabbitMQConsumer.cs",
+              "RelativeToolTip": "Application\\Services\\RabbitMQConsumer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-15T14:13:40.617Z",
               "EditorCaption": ""
             }
           ]

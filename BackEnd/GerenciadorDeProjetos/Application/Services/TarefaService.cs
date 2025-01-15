@@ -10,7 +10,7 @@ namespace GerenciadorDeProjetos.Domain.Services
         private readonly TarefaRepository _tarefaRepository;
         private readonly TokenService _tokenService;
         private readonly RabbitMqService _rabbitMqService;
-        private readonly TimeSpan _intervaloVerificacao = TimeSpan.FromMinutes(0.3);
+        private readonly TimeSpan _intervaloVerificacao = TimeSpan.FromMinutes(1);
 
         public TarefaService(TarefaRepository tarefaRepository, RabbitMqService rabbitMqService, TokenService tokenService)
         {
